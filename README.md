@@ -6,15 +6,15 @@ directory so the working directory doesn't need to be changed.
 
 You'll have to do some configuring if you want to mess with this.
 
-GoldenAgeLoginServer
-    Accounts
+GoldenAgeLoginServer\n\t
+    Accounts\n\n
   
-GoldenAgeClient
-    init
-    system
-        resources
-          3dart
-          auth
-          sound
-          textures
+GoldenAgeClient\n\t
+    init\n\t
+    system\n\t\t
+        resources\n\t\t\t
+          3dart\n\t\t\t
+          auth\n\t\t\t
+          sound\n\t\t\t
+          textures\n\t\t\t
       
