@@ -14,9 +14,9 @@ These are the directory structures of the output directories
 - GoldenAgeClient
   - init
   - system
-    - resources
-    - 3dart
-    - auth
-    - sound
-    - textures
+   - resources
+   - 3dart
+   - auth
+   - sound
+   - textures
       
