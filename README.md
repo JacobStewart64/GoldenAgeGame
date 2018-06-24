@@ -11,7 +11,5 @@ Output Directories
 
 You'll need httplib and openssl.
       
-I just had to revert =(
-
-figured why not make a repo so it doesn't happen again lol
+I'm about to start writing the game server and the part where you choose character at login. I'm still in the very beginning. I will use an https login server to establish encryption and decryption keys to use for udp communcations between the game server and client. The login server will renegotiate keys with everyone once an hour. This provides decent protection against some nuisances.
       
