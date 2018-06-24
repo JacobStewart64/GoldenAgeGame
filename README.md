@@ -4,23 +4,14 @@ An MMO made with irrlicht, cpp-httplib, and winsock udp sockets in Visual Studio
 The output folder is supposed to be configured and set up with the correct folders, and executable is to be ran from the ouput
 directory so the working directory doesn't need to be changed.
 
-You'll have to do some configuring if you want to mess with this.
+Output Directories
+- Client
+- GameServer
+- LoginServer 
 
-These are the directory structures of the output directories
-
-- GoldenAgeLoginServer
-  - Accounts
-  
-- GoldenAgeClient
-  - init
-  - system
-    - resources
-      - 3dart
-      - auth
-      - sound
-      - textures
+You'll need httplib and openssl.
       
-I just had to revert =(
+I'm about to start writing the game server and the part where you choose character at login. I'm still in the very beginning. I will use an https login server to establish encryption and decryption keys to use for udp communcations between the game server and client. The login server will renegotiate keys with everyone once an hour. This provides decent protection against some nuisances.
 
-figured why not make a repo so it doesn't happen again lol
+I will only put up to walking around and fighting mobs in a single area on github.
       
