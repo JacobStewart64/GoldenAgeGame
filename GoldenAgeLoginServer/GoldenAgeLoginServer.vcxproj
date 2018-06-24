@@ -76,7 +76,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>C:\Users\cool_\Documents\GoldenAgeLoginServer\</OutDir>
+    <OutDir>$(SolutionDir)\LoginServer</OutDir>
     <IncludePath>C:\Program Files\OpenSSL\include;$(IncludePath)</IncludePath>
     <LibraryPath>C:\Program Files\OpenSSL\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
