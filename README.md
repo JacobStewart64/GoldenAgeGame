@@ -7,14 +7,14 @@ directory so the working directory doesn't need to be changed.
 You'll have to do some configuring if you want to mess with this.
 
 GoldenAgeLoginServer
-  Accounts
+    Accounts
   
 GoldenAgeClient
-  init
-  system
-    resources
-      3dart
-      auth
-      sound
-      textures
+    init
+    system
+        resources
+          3dart
+          auth
+          sound
+          textures
       
