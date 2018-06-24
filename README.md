@@ -6,10 +6,12 @@ directory so the working directory doesn't need to be changed.
 
 You'll have to do some configuring if you want to mess with this.
 
+These are the directory structures of the output directories
+
 - GoldenAgeLoginServer
   - Accounts
   
-- GoldenAgeClient\n\t
+- GoldenAgeClient
   - init
   - system
     - resources
