@@ -20,3 +20,7 @@ These are the directory structures of the output directories
       - sound
       - textures
       
+I just had to revert =(
+
+figured why not make a repo so it doesn't happen again lol
+      
