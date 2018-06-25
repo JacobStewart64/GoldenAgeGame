@@ -6,8 +6,6 @@
 using namespace std;
 
 //if debug isn't defined, turns into a no-op
-//must pass file and line macros from main thread
-//or it evaluates to the file and line of this function =(
 template <typename ...T>
 void debug(string file, int line, T&& ...args)
 {
@@ -26,4 +24,5 @@ void debug(string file, int line, T&& ...args)
 	#endif
 }
 
+//use this, it outputs the file and line the output was made from!
 #define debug(...) debug(__FILE__, __LINE__, __VA_ARGS__);
