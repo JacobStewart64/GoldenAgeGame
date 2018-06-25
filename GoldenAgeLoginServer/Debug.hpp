@@ -1,0 +1,29 @@
+#pragma once
+
+#include <string>
+#include <iostream>
+
+using namespace std;
+
+//if debug isn't defined, turns into a no-op
+//must pass file and line macros from main thread
+//or it evaluates to the file and line of this function =(
+template <typename ...T>
+void debug(string file, int line, T&& ...args)
+{
+	#ifdef _DEBUG
+		unsigned int index = file.find_last_of('\\');
+		file[index] = '/';
+		index = file.find_last_of('\\', --index);
+		string finalfile = file.substr(index);
+		finalfile[0] = '/';
+		cout << finalfile << ":" << line << " ";
+		using expander = int[];
+		(void)expander {
+			0, (void(cout << std::forward<T>(args)), 0)...
+		};
+		cout << endl;
+	#endif
+}
+
+#define debug(...) debug(__FILE__, __LINE__, __VA_ARGS__);

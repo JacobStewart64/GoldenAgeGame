@@ -74,7 +74,7 @@
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>C:\Program Files\OpenSSL\include;C:\Users\cool_\Documents\irrlicht-1.8.4\include;$(IncludePath)</IncludePath>
     <LibraryPath>C:\Program Files\OpenSSL\lib;C:\Users\cool_\Documents\irrlicht-1.8.4\lib\Win64-visualStudio;$(LibraryPath)</LibraryPath>
-    <OutDir>$(SolutionDir)\Client</OutDir>
+    <OutDir>$(SolutionDir)\GAClient</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
@@ -151,6 +151,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\GoldenAgeLoginServer\Debug.hpp" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
