@@ -6,18 +6,11 @@
 #include <openssl/err.h>
 #include <string>
 
-struct cryptinfo {
+class cryptinfo {
 	uint8_t key[32];
 	uint8_t iv[AES_BLOCK_SIZE];
 	EVP_CIPHER_CTX *ectx;
 	EVP_CIPHER_CTX *dctx;
-
-	void fillkeyiv()
-	{
-		debug("creating new key and iv for a cryptinfo");
-		RAND_bytes(key, sizeof(key));
-		RAND_bytes(iv, sizeof(iv));
-	}
 
 	void fillectx()
 	{
@@ -57,9 +50,21 @@ struct cryptinfo {
 		abort();
 	}
 
+	friend std::ostream& operator<<(std::ostream &os, const  cryptinfo  &e);
+	friend std::istream& operator>>(std::istream &os, cryptinfo  &e);
 
-	int encrypt(string& plainstr, string ciphertext, unsigned char* aad = 0, int aad_len = 0)
+
+public:
+	void fillkeyiv()
 	{
+		debug("creating new key and iv for a cryptinfo");
+		RAND_bytes(key, sizeof(key));
+		RAND_bytes(iv, sizeof(iv));
+	}
+
+	int encrypt(string& plainstr, string& ciphertext, unsigned char* aad = 0, int aad_len = 0)
+	{
+		fillectx();
 		debug("encrypting string ", plainstr);
 		int len;
 		int ciphertextlen;
@@ -81,6 +86,7 @@ struct cryptinfo {
 
 	int decrypt(string& ciphertext, string& plainstr, unsigned char *aad = 0, int aad_len = 0)
 	{
+		filldctx();
 		debug("decrypting string ", ciphertext);
 		int len;
 		int plaintextlen;
@@ -110,10 +116,6 @@ struct cryptinfo {
 			return -1;
 		}
 	}
-
-private:
-	friend std::ostream& operator<<(std::ostream &os, const  cryptinfo  &e);
-	friend std::istream& operator>>(std::istream &os, cryptinfo  &e);
 };
 
 std::ostream& operator<<(std::ostream &os, const  cryptinfo  &e)
