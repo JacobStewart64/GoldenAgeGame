@@ -6,6 +6,8 @@
 #include <openssl/err.h>
 #include <string>
 
+using namespace std;
+
 class cryptinfo {
 	uint8_t key[32];
 	uint8_t iv[AES_BLOCK_SIZE];
@@ -49,7 +51,9 @@ class cryptinfo {
 			debug(ERR_error_string(errCode, NULL));
 		abort();
 	}
-
+	
+	friend char* operator<<(char* os, cryptinfo  &e);
+	friend char* operator>>(char* os, cryptinfo  &e);
 	friend std::ostream& operator<<(std::ostream &os, const  cryptinfo  &e);
 	friend std::istream& operator>>(std::istream &os, cryptinfo  &e);
 
@@ -62,7 +66,7 @@ public:
 		RAND_bytes(iv, sizeof(iv));
 	}
 
-	int encrypt(string& plainstr, string& ciphertext, unsigned char* aad = 0, int aad_len = 0)
+	int encrypt(std::string& plainstr, std::string& ciphertext, unsigned char* aad = 0, int aad_len = 0)
 	{
 		fillectx();
 		debug("encrypting string ", plainstr);
@@ -84,7 +88,7 @@ public:
 		return ciphertextlen;
 	}
 
-	int decrypt(string& ciphertext, string& plainstr, unsigned char *aad = 0, int aad_len = 0)
+	int decrypt(std::string& ciphertext, std::string& plainstr, unsigned char *aad = 0, int aad_len = 0)
 	{
 		filldctx();
 		debug("decrypting string ", ciphertext);
@@ -124,13 +128,10 @@ std::ostream& operator<<(std::ostream &os, const  cryptinfo  &e)
 	{
 		os << e.key[i];
 	}
-	os << "\n";
 	for (int i = 0; i < AES_BLOCK_SIZE; i++)
 	{
 		os << e.iv[i];
 	}
-	os << "\n";
-
 	return os;
 }
 
@@ -143,6 +144,32 @@ std::istream& operator>>(std::istream &os, cryptinfo  &e)
 	for (int i = 0; i < AES_BLOCK_SIZE; i++)
 	{
 		os >> e.iv[i];
+	}
+	return os;
+}
+
+char* operator>>(char* os, cryptinfo  &e)
+{
+	for (int i = 0; i < 32; i++)
+	{
+		e.key[i] = os[i];
+	}
+	for (int i = 32; i < 32 + AES_BLOCK_SIZE; i++)
+	{
+		e.iv[i] = os[i];
+	}
+	return os;
+}
+
+char* operator<<(char* os, cryptinfo  &e)
+{
+	for (int i = 0; i < 32; i++)
+	{
+		os[i] = e.key[i];
+	}
+	for (int i = 32; i < 32 + AES_BLOCK_SIZE; i++)
+	{
+		os[i] = e.iv[i];
 	}
 	return os;
 }

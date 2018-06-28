@@ -1,33 +1,58 @@
 #pragma once
 
-#include <winsock2.h>
-#include <stdio.h>
+#include <enet/win32.h>
+#include <enet/enet.h>
+#include "../GoldenAgeLoginServer/Debug.hpp"
 
-void initWinsock()
+void initENet()
 {
-	WSADATA wsaData;
-	WSAStartup(MAKEWORD(2, 2), &wsaData);
-}
-
-unsigned int fillinsockaddr(sockaddr_in& addr, unsigned int port, const char* inet)
-{
-	unsigned int fromlen = sizeof(addr);
-	addr.sin_family = AF_INET;
-	addr.sin_port = htons(port);
-	addr.sin_addr.s_addr = inet_addr(inet);
-	return fromlen;
-}
-
-unsigned int initSocketAndSockAddr(SOCKET& s, sockaddr_in& local, unsigned int port, bool blocking = false)
-{
-	u_long iMode = 1;
-	unsigned int fromlen = fillinsockaddr(local, port, "127.0.0.1");
-	s = socket(AF_INET, SOCK_DGRAM, 0);
-	if (!blocking)
+	debug("initializing ENet");
+	if (enet_initialize() != 0)
 	{
-		if (ioctlsocket(s, FIONBIO, &iMode) != NO_ERROR)
-			printf("ioctlsocket failed with error");
+		debug("An error occurred while initializing ENet.\n");
+		system("pause");
 	}
-	bind(s, (sockaddr*)&local, sizeof(local));
-	return fromlen;
+	atexit(enet_deinitialize);
+	debug("initialize enet good");
+}
+
+ENetHost* makeServer(ENetAddress& address, unsigned short port)
+{
+	debug("make udp server on port ", port);
+	address.host = ENET_HOST_ANY;
+	address.port = port;
+	ENetHost* server = enet_host_create(&address /* the address to bind the server host to */,
+		32      /* allow up to 10,000 clients and/or outgoing connections */,
+		2      /* allow up to 2 channels to be used, 0 and 1 */,
+		0      /* assume any amount of incoming bandwidth */,
+		0      /* assume any amount of outgoing bandwidth */);
+	if (server == NULL)
+	{
+		debug("An error occurred while trying to create an ENet server host.\n");
+		system("pause");
+		exit(EXIT_FAILURE);
+	}
+	debug("making udp server good");
+	return server;
+}
+
+
+ENetHost* makeClient()
+{
+	debug("making udp client");
+	ENetHost* client = enet_host_create(NULL /* create a client host */,
+		1 /* only allow 1 outgoing connection */,
+		2 /* allow up 2 channels to be used, 0 and 1 */,
+		0,
+		0
+	);
+
+	if (client == NULL)
+	{
+		debug("An error occurred while trying to create an ENet client host.\n");
+		system("pause");
+		exit(EXIT_FAILURE);
+	}
+	debug("making udp client good");
+	return client;
 }
