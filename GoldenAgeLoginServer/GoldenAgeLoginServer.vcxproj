@@ -77,8 +77,8 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(SolutionDir)\GALoginServer</OutDir>
-    <IncludePath>C:\Users\cool_\Documents\include\cpp-httplib;C:\Program Files\OpenSSL\include;C:\Users\cool_\Documents\enet-1.3.13\enet-1.3.13\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\cool_\Documents\enet-1.3.13\enet-1.3.13;C:\Program Files\OpenSSL\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Program Files\OpenSSL\include;$(SolutionDir)\ENet\include;$(SolutionDir)\cpp-httplib;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Program Files\OpenSSL\lib;$(SolutionDir)\ENet\libs;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>

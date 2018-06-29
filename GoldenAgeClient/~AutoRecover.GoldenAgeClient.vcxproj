@@ -74,8 +74,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>C:\Users\cool_\Documents\include\cpp-httplib;C:\Program Files\OpenSSL\include;C:\Users\cool_\Documents\enet-1.3.13\enet-1.3.13\include;C:\Users\cool_\Documents\irrlicht\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Program Files\OpenSSL\lib;C:\Users\cool_\Documents\irrlicht\lib\Win64-visualstudio;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Program Files\OpenSSL\include;$(SolutionDir)\ENet\include;$(SolutionDir)\cpp-httplib;$(SolutionDir)\irrlicht\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Program Files\OpenSSL\lib;$(SolutionDir)\ENet\libs;$(SolutionDir)\irrlicht\lib\Win64-visualstudio;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)\GAClient\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -119,7 +119,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;Irrlicht.lib;libssl.lib;libcrypto.lib;Ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Winmm.lib;enet64.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;Irrlicht.lib;libssl.lib;libcrypto.lib;Ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
       <SuppressStartupBanner>false</SuppressStartupBanner>
       <LinkStatus>true</LinkStatus>
