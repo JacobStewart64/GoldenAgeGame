@@ -21,7 +21,10 @@
     <ClInclude Include="targetver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\GoldenAgeLoginServer\Debug.hpp">
+    <ClInclude Include="LoginEventReceiver.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="clientloops.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -9,6 +9,13 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GoldenAgeClient", "GoldenAg
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GoldenAgeLoginServer", "GoldenAgeLoginServer\GoldenAgeLoginServer.vcxproj", "{E94C1D71-3C65-4BD9-AE18-18F9876E9F7D}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "include", "include", "{FEB37CD5-59CC-4ADA-AAFF-6E2F4C3B74BF}"
+	ProjectSection(SolutionItems) = preProject
+		include\GoldenAge\cryptinfo.h = include\GoldenAge\cryptinfo.h
+		include\GoldenAge\Debug.h = include\GoldenAge\Debug.h
+		include\GoldenAge\winsockwrapper.h = include\GoldenAge\winsockwrapper.h
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
