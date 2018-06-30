@@ -77,7 +77,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(SolutionDir)\GALoginServer</OutDir>
-    <IncludePath>C:\Program Files\OpenSSL\include;$(SolutionDir)\ENet\include;$(SolutionDir)\cpp-httplib;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)\include;C:\Program Files\OpenSSL\include;$(SolutionDir)\ENet\include;$(SolutionDir)\cpp-httplib;$(IncludePath)</IncludePath>
     <LibraryPath>C:\Program Files\OpenSSL\lib;$(SolutionDir)\ENet\libs;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -153,9 +153,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\GoldenAgeGameServer\winsockwrapper.hpp" />
-    <ClInclude Include="cryptinfo.hpp" />
-    <ClInclude Include="Debug.hpp" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>

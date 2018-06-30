@@ -74,7 +74,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>C:\Program Files\OpenSSL\include;$(SolutionDir)\ENet\include;$(SolutionDir)\cpp-httplib;$(SolutionDir)\irrlicht\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)\include;C:\Program Files\OpenSSL\include;$(SolutionDir)\ENet\include;$(SolutionDir)\cpp-httplib;$(SolutionDir)\irrlicht\include;$(IncludePath)</IncludePath>
     <LibraryPath>C:\Program Files\OpenSSL\lib;$(SolutionDir)\ENet\libs;$(SolutionDir)\irrlicht\lib\Win64-visualstudio;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)\GAClient\</OutDir>
   </PropertyGroup>
@@ -184,9 +184,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\GoldenAgeGameServer\winsockwrapper.hpp" />
-    <ClInclude Include="..\GoldenAgeLoginServer\cryptinfo.hpp" />
-    <ClInclude Include="..\GoldenAgeLoginServer\Debug.hpp" />
+    <ClInclude Include="clientloops.h" />
+    <ClInclude Include="LoginEventReceiver.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>

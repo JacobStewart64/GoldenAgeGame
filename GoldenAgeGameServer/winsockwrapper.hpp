@@ -2,7 +2,7 @@
 
 #include <enet/win32.h>
 #include <enet/enet.h>
-#include "../GoldenAgeLoginServer/Debug.hpp"
+#include <GoldenAge/Debug.hpp>
 
 void initENet()
 {

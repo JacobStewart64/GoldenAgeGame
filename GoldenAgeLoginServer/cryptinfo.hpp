@@ -4,7 +4,6 @@
 #include <openssl/aes.h>
 #include <openssl/rand.h>
 #include <openssl/err.h>
-#include <string>
 
 using namespace std;
 
