@@ -97,18 +97,15 @@ public:
 		debug("decrypt called");
 		filldctx();
 		debug("decrypting string ", ciphertext);
-		int len;
-		int plaintextlen;
 		unsigned char buf[48];
-		int ret;
 		debug("writing unencrypted bytes to plaintext");
-		if (!EVP_DecryptUpdate(dctx, buf, &len, (const unsigned char*)ciphertext.c_str(), ciphertext.size()))
-			handleErrors();
-		plaintextlen = len;
+		int len;
+		if (!EVP_DecryptUpdate(dctx, buf, &len, (const unsigned char*)ciphertext.c_str(), ciphertext.size())) handleErrors();
 		debug("writing final bytes to plaintext");
-		ret = EVP_DecryptFinal_ex(dctx, buf + plaintextlen, &len);
-		plaintextlen += len;
-		*(buf + plaintextlen) = '\0';
+		int oldlen = len;
+		int ret = EVP_DecryptFinal_ex(dctx, buf + oldlen, &len);
+		oldlen += len;
+		buf[oldlen] = '\0';
 		debug("freeing ctx obj");
 		EVP_CIPHER_CTX_free(dctx);
 		plainstr = (const char*)buf;
@@ -116,7 +113,7 @@ public:
 		if (ret == 1)
 		{
 			debug("decryption good");
-			return plaintextlen;
+			return oldlen;
 		}
 		else
 		{
