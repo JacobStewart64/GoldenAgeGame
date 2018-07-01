@@ -1,8 +1,10 @@
 #pragma once
 #include "stdafx.h"
 #include <GoldenAge/Debug.h>
+#include <GoldenAge/cryptinfo.h>
 
 extern irr::gui::IGUIEnvironment* env;
+extern cryptinfo ci;
 
 namespace ga {
 	class LoginEventReceiver : public irr::IEventReceiver
@@ -16,9 +18,10 @@ namespace ga {
 		std::unordered_map<irr::u32, std::string> gsitemmap;
 		httplib::SSLClient* client;
 		std::vector<std::thread> threads;
+		unsigned int* runloop;
 
 	public:
-		LoginEventReceiver(httplib::SSLClient& client)
+		LoginEventReceiver(httplib::SSLClient& client, unsigned int* runloop)
 		{
 			debug("constructing LoginEventReceiver");
 			this->client = &client;
@@ -27,6 +30,7 @@ namespace ga {
 			email->setTextAlignment(irr::gui::EGUI_ALIGNMENT::EGUIA_CENTER, irr::gui::EGUI_ALIGNMENT::EGUIA_CENTER);
 			password->setTextAlignment(irr::gui::EGUI_ALIGNMENT::EGUIA_CENTER, irr::gui::EGUI_ALIGNMENT::EGUIA_CENTER);
 			debug("setting alignment good");
+			this->runloop = runloop;
 			debug("constructing LoginEventReceiver good");
 		}
 
@@ -193,6 +197,10 @@ namespace ga {
 				debug("login success");
 				statusmsg->setText(L"Login Success!");
 				resetStatusMessageTimeout();
+				(char*)res->body.c_str() >> ci;
+				debug("client ci for this session: ", ci);
+				*runloop = false;
+				//connect to game server
 			}
 			//this body needs to let me send packets at my game server
 		}

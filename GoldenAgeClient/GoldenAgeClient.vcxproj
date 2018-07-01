@@ -74,7 +74,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(SolutionDir)\include;C:\Program Files\OpenSSL\include;$(SolutionDir)\ENet\include;$(SolutionDir)\cpp-httplib;$(SolutionDir)\irrlicht\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(WindowsSDK_IncludePath);$(SolutionDir)\include;C:\Program Files\OpenSSL\include;$(SolutionDir)\ENet\include;$(SolutionDir)\cpp-httplib;$(SolutionDir)\irrlicht\include;$(IncludePath)</IncludePath>
     <LibraryPath>C:\Program Files\OpenSSL\lib;$(SolutionDir)\ENet\libs;$(SolutionDir)\irrlicht\lib\Win64-visualstudio;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)\GAClient\</OutDir>
     <RunCodeAnalysis>false</RunCodeAnalysis>
