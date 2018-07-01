@@ -4,6 +4,7 @@
 #include <openssl/aes.h>
 #include <openssl/rand.h>
 #include <openssl/err.h>
+#include <string>
 
 class cryptinfo {
 	EVP_CIPHER_CTX* ectx;

@@ -3,13 +3,13 @@
 #include "stdafx.h"
 #include "LoginEventReceiver.h"
 #include <GoldenAge/Debug.h>
-#include <GoldenAge/winsockwrapper.h>
+#include <GoldenAge/udp_com.h>
 
 extern irr::IrrlichtDevice* device;
 extern irr::video::IVideoDriver* driver;
 
 namespace ga {
-	void loginScreenLoop()
+	void loginScreenLoop(unsigned int& runloop)
 	{
 		debug("initializing data for login screen loop");
 		//ITexture* bg = driver->getTexture("./system/resources/textures/loginscreen.png");
@@ -17,13 +17,13 @@ namespace ga {
 		irr::video::ITexture* title = driver->getTexture("./system/resources/textures/GoldenAgeTitle.png");
 		irr::gui::IGUIFont* font = device->getGUIEnvironment()->getBuiltInFont();
 		httplib::SSLClient client("localhost", 1234, 10);
-		LoginEventReceiver receiver(client);
+		LoginEventReceiver receiver(client, &runloop);
 		device->setEventReceiver(&receiver);
 		receiver.setupGameServerMenu();
 		receiver.resetStatusMessageTimeout();
 		debug("initializing data for login screen loop good");
 		debug("entering login screen loop");
-		while (device->run() && driver)
+		while (device->run() && driver && runloop > 0)
 		{
 			driver->beginScene(true, true, irr::video::SColor(0, 120, 102, 136));
 
@@ -47,46 +47,7 @@ namespace ga {
 
 			driver->endScene();
 		}
+		runloop = 1;
 		debug("leaving login screen loop");
-	}
-
-	void gameLoop()
-	{
-		debug("initializing data for game loop");
-		initENet();
-		ENetHost* client = makeClient(1, 2);
-		debug("initializing data for game loop good");
-		debug("entering game loop");
-		while (true)
-		{
-			ENetEvent event;
-			while (enet_host_service(client, &event, 0) > 0)
-			{
-				switch (event.type)
-				{
-				case _ENetEventType::ENET_EVENT_TYPE_CONNECT:
-					debug("A new client connected from ", event.peer->address.host, ":", event.peer->address.port);
-					/* Store any relevant client information here. */
-					event.peer->data = (void*)"Client information";
-					break;
-				case _ENetEventType::ENET_EVENT_TYPE_RECEIVE:
-					debug("A packet of length ", event.packet->dataLength, " containing ", event.packet->data, " was received from ", event.peer->data, " on channel ", event.peer->data, ".\n");
-					debug("handling packet");
-
-					debug("packet handled");
-
-					debug("destroying packet");
-					enet_packet_destroy(event.packet);
-					debug("destroying packet good");
-					break;
-
-				case _ENetEventType::ENET_EVENT_TYPE_DISCONNECT:
-					debug(event.peer->data, " disconnected");
-					debug("null their data");
-					event.peer->data = NULL;
-				}
-			}
-		}
-		debug("leaving game loop");
 	}
 }
