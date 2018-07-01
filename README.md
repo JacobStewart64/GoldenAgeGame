@@ -32,7 +32,7 @@ An MMO made with Irrlicht, cpp-httplib, OpenSSL, and ENet in Visual Studio 2017
 - client and login server communicating with TLS 1.3(?) HTTPS
 - login server and game server encrypt UDP communications over my intranet with an established key.
   - not done!
-- client and game server communicate with encrypted UDP, encryption info is established over secure channels via the login server. Hackers could crack a client, and all they would get is the power to look at udp packets in plaintext. It is not critical, there are other ways to figure out the way the game server works anyway. The game server already needs to be aware of that problem.
+- client and game server communicate with encrypted UDP, encryption info is established over secure channels via the login server. Hackers could crack a client, and all they would get is the power to look at their own udp packets in plaintext. It is not critical, there are other ways to figure out the way the game server works anyway. The game server already needs to be aware of that problem.
   - getting close!
 - we don't use cloud storage or a db. We don't touch the hard disk rarely but for creating accounts or updating account information every once in a while as people play. Plain files and directories will work great? I'm thinking it's better than cloggin the tubes with requests to something like MongoDB. I guess I'll need RAID lol... It's like owning vs renting, you have to mow your own lawn. It will be fun they said! I need a riding lawn mower lol.
   - I'm a lot farther ahead conceptually than codely lol
