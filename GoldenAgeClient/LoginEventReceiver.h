@@ -1,10 +1,14 @@
 #pragma once
 #include "stdafx.h"
-#include <GoldenAge/Debug.h>
+#include <GoldenAge/debug.h>
 #include <GoldenAge/cryptinfo.h>
+#include <GoldenAge/array_packet.h>
+#include <GoldenAge/wcstrtostdstr.h>
+#include <GoldenAge/toongraphics.h>
+#include <GoldenAge/secretkey.h>
 
 extern irr::gui::IGUIEnvironment* env;
-extern cryptinfo ci;
+extern ga::cryptinfo ci;
 
 namespace ga {
 	class LoginEventReceiver : public irr::IEventReceiver
@@ -32,13 +36,6 @@ namespace ga {
 			debug("setting alignment good");
 			this->runloop = runloop;
 			debug("constructing LoginEventReceiver good");
-		}
-
-		~LoginEventReceiver()
-		{
-			debug("joining login event receiver threads");
-			jointhreads();
-			debug("joining login event receiver threads good");
 		}
 
 		virtual bool OnEvent(const irr::SEvent& event)
@@ -162,31 +159,25 @@ namespace ga {
 		void makeLoginPost(const char* location, std::shared_ptr<httplib::Response>& res)
 		{
 			debug("login post at ", location);
-			debug("making buffer of size ", LOGINBUFFERMAX + LOGINBUFFERMAX + LOGINBUFFERMAX + 3);
-			char emailspacepassword[LOGINBUFFERMAX + LOGINBUFFERMAX + LOGINBUFFERMAX + 3];
-
-			wcstombs(emailspacepassword, email->getText(), LOGINBUFFERMAX);
-			irr::u32 len = strlen(emailspacepassword);
-
-			*(emailspacepassword + len++) = ' ';
-
-			wcstombs(emailspacepassword + len, password->getText(), LOGINBUFFERMAX);
-			len = strlen(emailspacepassword);
-
-			*(emailspacepassword + len++) = ' ';
-
-			std::string str;
-			getGameServerStringFromSelected(str);
-			memcpy(emailspacepassword + len, str.c_str(), str.size() + 1);
-
-			res = client->Post(location, emailspacepassword, "text/plain");
+			//fill the packet args
+			std::string email_string = wcstrtostdstr16(email->getText());
+			std::string password_string = wcstrtostdstr16(password->getText());
+			std::string selected_server; getGameServerStringFromSelected(selected_server);
+			ga::array_packet packet(
+				ga::array_packet::get_args_size(
+					email_string,
+					password_string,
+					selected_server
+				));
+			packet.fill(email_string, password_string, selected_server);
+			res = client->Post(location, packet(), "text/plain");
 		}
 
 		void sendLoginPost()
 		{
 			std::shared_ptr<httplib::Response> res;
 			makeLoginPost("/login", res);
-			debug("response body: ", res->body);
+			debug("response body: ", res->body.c_str());
 			if (res->body[0] == '\0')
 			{
 				debug("login failure");
@@ -198,8 +189,11 @@ namespace ga {
 				statusmsg->setText(L"Login Success!");
 				resetStatusMessageTimeout();
 				(char*)res->body.c_str() >> ci;
+				ga::toongraphics tg;
+				((char*)res->body.c_str() + res->body.size()) >> tg;
 				debug("client ci for this session: ", ci);
 				*runloop = false;
+				jointhreads(); //this will be destructed. join any threads.
 				//connect to game server
 			}
 			//this body needs to let me send packets at my game server

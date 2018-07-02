@@ -1,5 +1,5 @@
 #pragma once
-#include <GoldenAge/Debug.h>
+#include <GoldenAge/debug.h>
 #include <enet/enet.h>
 #include <enet/win32.h>
 #include <vector>
@@ -8,28 +8,14 @@
 #define USEENETINTERNALBANDWIDTHALG 0
 
 namespace ga {
-	/*
-		encapsulates udp communication for games.
-		register your callbacks with the com.
-		you need to provide your own delta time
-		method. There are so many ways to do it
-		so I allowed you to be picky lol.
-		call listenLoop to start your loop that
-		processes pretty much whatever but it's
-		got the delta time for games.
-
-		Maybe I will make it configurable with
-		defines and let you compile a custom one
-		that has the features you want.
-	*/
 	class udp_com {
-		ENetEvent event;
+		ENetEvent e;
 		ENetHost* host;
-		void(*handler_receive)(ENetEvent& e) = 0;
-		void(*handler_connect)(ENetPeer* e) = 0;
-		void(*handler_disconnect)(ENetPeer* e) = 0;
-		void(*handler_tick)(unsigned int delta_time) = 0;
-		unsigned int(*handler_delta)(unsigned int last_time) = 0;
+		void(*handler_receive)(ENetEvent& e) = nullptr;
+		void(*handler_connect)(ENetPeer* e) = nullptr;
+		void(*handler_disconnect)(ENetPeer* e) = nullptr;
+		void(*handler_tick)(unsigned int delta_time) = nullptr;
+		unsigned int(*handler_delta)(unsigned int last_time) = nullptr;
 		std::vector<ENetPeer*> peers;
 
 		void initENet()
@@ -129,6 +115,11 @@ namespace ga {
 			}
 		}
 
+		ENetPeer* getPeer()
+		{
+			return peers.back();
+		}
+
 		void connect(std::string domain, unsigned short port, unsigned int timeout)
 		{
 			ENetAddress address;
@@ -142,7 +133,7 @@ namespace ga {
 				system("pause");
 				exit(EXIT_FAILURE);
 			}
-			if (enet_host_service(host, &event, timeout) > 0 && event.type == ENET_EVENT_TYPE_CONNECT)
+			if (enet_host_service(host, &e, timeout) > 0 && e.type == ENET_EVENT_TYPE_CONNECT)
 			{
 				debug("Connection to ", domain, ":", port, " succeeded.");
 			}
@@ -152,6 +143,11 @@ namespace ga {
 				enet_peer_reset(peers.back());
 				debug("Connection to ", domain, ":", port, " failed.");
 			}
+		}
+
+		void send(const char* packet)
+		{
+
 		}
 
 		void register_receive(void(*handler_receive)(ENetEvent& e))
@@ -190,30 +186,30 @@ namespace ga {
 			debug("entering udp listen loop");
 			while (runloop > 0)
 			{
-				ENetEvent event;
+				ENetEvent e;
 
-				while (enet_host_service(host, &event, 0) > 0)
+				while (enet_host_service(host, &e, 0) > 0)
 				{
-					switch (event.type)
+					switch (e.type)
 					{
 					case _ENetEventType::ENET_EVENT_TYPE_CONNECT:
-						debug("A new client connected from ", event.peer->address.host, ":", event.peer->address.port);
+						debug("A new client connected from ", e.peer->address.host, ":", e.peer->address.port);
 						debug("handling connect");
-						handler_connect(event.peer);
+						handler_connect(e.peer);
 						break;
 					case _ENetEventType::ENET_EVENT_TYPE_RECEIVE:
-						debug("A packet of length ", event.packet->dataLength, " containing ", event.packet->data, " was received from ", event.peer->data, " on channel ", event.peer->data, ".\n");
+						debug("A packet of length ", e.packet->dataLength, " containing ", e.packet->data, " was received from ", e.peer->data, " on channel ", e.peer->data, ".\n");
 						debug("handling packet");
-						handler_receive(event);
+						handler_receive(e);
 						debug("packet handled destroying packet");
-						enet_packet_destroy(event.packet);
+						enet_packet_destroy(e.packet);
 						break;
 					case _ENetEventType::ENET_EVENT_TYPE_DISCONNECT:
-						debug(event.peer->data, " disconnected");
+						debug(e.peer->data, " disconnected");
 						debug("handling disconnect");
-						handler_disconnect(event.peer);
+						handler_disconnect(e.peer);
 						debug("null peer->data");
-						event.peer->data = NULL;
+						e.peer->data = NULL;
 					}
 				}
 				unsigned int delta_time = handler_delta(last_time);
@@ -223,5 +219,4 @@ namespace ga {
 			debug("leaving udp listen loop");
 		}
 	};
-
-}
+};
