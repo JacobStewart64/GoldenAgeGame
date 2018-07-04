@@ -4,18 +4,23 @@
 #include <enet/win32.h>
 #include <vector>
 #include <string>
+#include <functional>
 
 #define USEENETINTERNALBANDWIDTHALG 0
 
+typedef std::function<void(ENetEvent&)> efunc;
+typedef std::function<void(ENetPeer*)> pfunc;
+typedef std::function<unsigned int(unsigned int)> dfunc;
+typedef std::function<void(unsigned int)> tfunc;
 namespace ga {
 	class udp_com {
 		ENetEvent e;
 		ENetHost* host;
-		void(*handler_receive)(ENetEvent& e) = nullptr;
-		void(*handler_connect)(ENetPeer* e) = nullptr;
-		void(*handler_disconnect)(ENetPeer* e) = nullptr;
-		void(*handler_tick)(unsigned int delta_time) = nullptr;
-		unsigned int(*handler_delta)(unsigned int last_time) = nullptr;
+		efunc handler_receive = nullptr;
+		pfunc handler_connect = nullptr;
+		pfunc handler_disconnect = nullptr;
+		tfunc handler_tick = nullptr;
+		dfunc handler_delta = nullptr;
 		std::vector<ENetPeer*> peers;
 
 		void initENet()
@@ -145,36 +150,39 @@ namespace ga {
 			}
 		}
 
-		void send(const char* packet)
+		void send(ENetPeer* peer, const char* packet, unsigned int size, enum _ENetPacketFlag ENETPACKETFLAG)
 		{
-
+			debug("sending packet");
+			ENetPacket* pack = enet_packet_create(packet, size, ENETPACKETFLAG);
+			debug("the packet we are sending\n", pack->data);
+			enet_peer_send(peer, 0, pack);
 		}
 
-		void register_receive(void(*handler_receive)(ENetEvent& e))
+		void register_receive(efunc handler_receive)
 		{
 			debug("registering receive handler");
 			this->handler_receive = handler_receive;
 		}
 
-		void register_connect(void(*handler_connect)(ENetPeer* e))
+		void register_connect(pfunc handler_connect)
 		{
 			debug("registering connect handler");
 			this->handler_connect = handler_connect;
 		}
 
-		void register_disconnect(void(*handler_disconnect)(ENetPeer* e))
+		void register_disconnect(pfunc handler_disconnect)
 		{
 			debug("registering disconnect handler");
 			this->handler_disconnect = handler_disconnect;
 		}
 
-		void register_tick(void(*handler_tick)(unsigned int delta_time))
+		void register_tick(tfunc handler_tick)
 		{
 			debug("registering tick handler");
 			this->handler_tick = handler_tick;
 		}
 
-		void register_delta(unsigned int(*handler_delta)(unsigned int last_time))
+		void register_delta(dfunc handler_delta)
 		{
 			debug("registering delta handler");
 			this->handler_delta = handler_delta;

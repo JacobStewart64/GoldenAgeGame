@@ -8,7 +8,7 @@ namespace ga {
 
 		secretkey() {}
 
-		secretkey(std::string established_key)
+		secretkey(std::string& established_key)
 		{
 			strcpy((char*)buffer, established_key.c_str());
 		}
@@ -21,6 +21,11 @@ namespace ga {
 
 		std::string to_string() {
 			return (char*)buffer;
+		}
+
+		void from_string(std::string& sk)
+		{
+			strcpy((char*)buffer, sk.c_str());
 		}
 	};
 };

@@ -15,6 +15,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "include", "include", "{FEB3
 		include\GoldenAge\cryptinfo.h = include\GoldenAge\cryptinfo.h
 		include\GoldenAge\debug.h = include\GoldenAge\debug.h
 		include\GoldenAge\secretkey.h = include\GoldenAge\secretkey.h
+		include\GoldenAge\toon.h = include\GoldenAge\toon.h
 		include\GoldenAge\toongraphics.h = include\GoldenAge\toongraphics.h
 		include\GoldenAge\udp_com.h = include\GoldenAge\udp_com.h
 		include\GoldenAge\wcstrtostdstr.h = include\GoldenAge\wcstrtostdstr.h

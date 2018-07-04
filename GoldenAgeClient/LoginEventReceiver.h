@@ -9,6 +9,8 @@
 
 extern irr::gui::IGUIEnvironment* env;
 extern ga::cryptinfo ci;
+extern ga::secretkey sk;
+extern std::string selected_account;
 
 namespace ga {
 	class LoginEventReceiver : public irr::IEventReceiver
@@ -170,7 +172,9 @@ namespace ga {
 					selected_server
 				));
 			packet.fill(email_string, password_string, selected_server);
+			debug("the packet: ", packet.get(), "\n", packet.get(), "\n", packet.get());
 			res = client->Post(location, packet(), "text/plain");
+			selected_account = email_string;
 		}
 
 		void sendLoginPost()
@@ -188,15 +192,22 @@ namespace ga {
 				debug("login success");
 				statusmsg->setText(L"Login Success!");
 				resetStatusMessageTimeout();
-				(char*)res->body.c_str() >> ci;
-				ga::toongraphics tg;
-				((char*)res->body.c_str() + res->body.size()) >> tg;
+				ga::array_packet packet;
+				packet.from_buf(res->body.c_str(), res->body.size());
+				std::string type = packet.get();
+				std::string key = packet.get();
+				std::string iv = packet.get();
+				std::string skstr = packet.get();
+				ci.keyFromString(key);
+				ci.ivFromString(iv);
+				sk.from_string(skstr);
+				debug("established session!");
 				debug("client ci for this session: ", ci);
+				debug("client secret key for this session: ", sk.to_string());
+				debug("connecting to the game server...");
 				*runloop = false;
 				jointhreads(); //this will be destructed. join any threads.
-				//connect to game server
 			}
-			//this body needs to let me send packets at my game server
 		}
 
 		void sendCreateAccountPost()

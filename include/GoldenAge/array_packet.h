@@ -10,31 +10,38 @@ namespace ga {
 	//and the out_strings should all mirror the in strings.
 	class array_packet {
 		std::vector<unsigned char> packet;
+		unsigned int index = 0;
 
-		void zip_string(std::string& str)
+		void zip_string(std::string str)
 		{
+			debug("packet add: ", str);
+			packet.push_back(str.size());
 			for (char c : str)
 			{
 				packet.push_back(c);
 			}
-			packet.push_back('\0');
-		}
-
-		void unzip_string(std::string& out_str, unsigned int& start_len)
-		{
-			for (; packet[start_len] != '\0'; ++start_len)
-			{
-				out_str.push_back(packet[start_len]);
-			}
-			out_str.push_back('\0');
 		}
 
 	public:
 		//pass the size of all the args using the static helper
 		//variadic args only strings
+		array_packet() {}
+
 		array_packet(unsigned int args_size)
 		{
+			debug("reserving ", args_size, " bytes");
 			packet.reserve(args_size);
+		}
+
+		void from_buf(const char* buf, unsigned int size)
+		{
+			debug("reserving ", size, " bytes");
+			packet.reserve(size);
+			for (unsigned int i = 0; i < size; ++i)
+			{
+				packet.push_back(buf[i]);
+			}
+			debug("packet after from buffer: ", (const char*)&packet[0]);
 		}
 
 		//fill the packet with your string args, you can easily
@@ -43,14 +50,30 @@ namespace ga {
 		template<typename ...T>
 		void fill(T ...args)
 		{
-			((void)zip_string(args), ...);
+			((void)zip_string(std::forward<T>(args)), ...);
 		}
 
-		template<typename ...T>
-		void get(unsigned int len = 0, T ...args)
+		std::string get()
 		{
-			
-			((void)unzip_string(args, len), ...);
+			std::string newstr;
+			unsigned int length = index + packet[index] + 1;
+			++index;
+			for (; index < length; ++index)
+			{
+				newstr.push_back(packet[index]);
+			}
+			debug("got string: ", newstr);
+			return newstr;
+		}
+
+		void add(std::string str)
+		{
+			debug("adding string: ", str);
+			packet.push_back(str.size());
+			for (char c : str)
+			{
+				packet.push_back(c);
+			}
 		}
 
 		//helper to get the needed conversion to size of args + their null chars
@@ -59,7 +82,7 @@ namespace ga {
 		static unsigned int get_args_size(T ...args)
 		{
 			int size = 0;
-			((void)(size += std::forward<T>(args).size()), ...);
+			((void)((size += args.size() + 1)), ...);
 			return size;
 		}
 

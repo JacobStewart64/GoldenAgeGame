@@ -10,12 +10,49 @@ namespace ga {
 		unsigned int id_legs;
 		unsigned int id_boots;
 
+	std::string to_string()
+	{
+		std::string tgstr;
+		pushIntBytes(id_head, tgstr);
+		pushIntBytes(id_shoulder, tgstr);
+		pushIntBytes(id_gloves, tgstr);
+		pushIntBytes(id_chest, tgstr);
+		pushIntBytes(id_legs, tgstr);
+		pushIntBytes(id_boots, tgstr);
+		return tgstr;
+	}
+
+	void from_string(std::string& str)
+	{
+		debug("from str ", str);
+		id_head = (unsigned int)str[0];
+		id_shoulder = (unsigned int)str[4];
+		id_gloves = (unsigned int)str[8];
+		id_chest = (unsigned int)str[12];
+		id_legs = (unsigned int)str[16];
+		id_boots = (unsigned int)str[20];
+	}
+
 	private:
+
+		void pushIntBytes(unsigned int num, std::string& str)
+		{
+			debug("push int bytes ", str);
+			char buf[4];
+			memcpy(buf, &num, 4);
+			str.push_back(buf[0]);
+			str.push_back(buf[1]);
+			str.push_back(buf[2]);
+			str.push_back(buf[3]);
+			debug("push int bytes ", str);
+		}
+
 		friend char* operator<<(char* os, const toongraphics& e);
 		friend char* operator>>(char* os, const toongraphics& e);
 		friend std::ostream& operator<<(std::ostream &os, const toongraphics& e);
 		friend std::istream& operator>>(std::istream &os, toongraphics  &e);
 	};
+
 
 	std::ostream& operator<<(std::ostream &os, const ga::toongraphics  &e)
 	{

@@ -1,6 +1,7 @@
 #pragma once
 #include <GoldenAge/debug.h>
 #include <GoldenAge/toongraphics.h>
+#include <GoldenAge/toon.h>
 #include <irrlicht.h>
 #include <unordered_map>
 
@@ -11,15 +12,20 @@ namespace ga {
 	class CharacterSelectEventReceiver : public irr::IEventReceiver
 	{
 		//draw the toon!
-		irr::gui::IGUIListBox* toon_select_box = env->addListBox(irr::core::rect<irr::s32>(300, 210, 500, 290), 0, 1);
-		irr::gui::IGUIButton* toon_select_button = env->addButton(irr::core::rect<irr::s32>(350, 500, 450, 530), 0, 1, L"Login", L"Login");
-		irr::gui::IGUIButton* options_button = env->addButton(irr::core::rect<irr::s32>(350, 500, 450, 530), 0, 2, L"Login", L"Login");
+		irr::gui::IGUIListBox* toon_select_box;
+		irr::gui::IGUIButton* toon_select_button;
+		irr::gui::IGUIButton* options_button;
 		std::unordered_map<std::string, ga::toongraphics> toon_name_to_graphics;
 		std::unordered_map<unsigned int, std::string> toon_id_to_name;
 
 	public:
-		CharacterSelectEventReceiver(ga::toongraphics& toon_graphics)
+		CharacterSelectEventReceiver() {}
+
+		CharacterSelectEventReceiver(std::vector<ga::toon> mytoons)
 		{
+			toon_select_box = env->addListBox(irr::core::rect<irr::s32>(300, 210, 500, 290), 0, 1);
+			toon_select_button = env->addButton(irr::core::rect<irr::s32>(350, 500, 450, 530), 0, 1, L"Login", L"Login");
+			options_button = env->addButton(irr::core::rect<irr::s32>(350, 500, 450, 530), 0, 2, L"Login", L"Login");
 			//initialize map of uint to toongraphic
 
 		}

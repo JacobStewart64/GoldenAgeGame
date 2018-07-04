@@ -58,16 +58,18 @@ namespace ga {
 		friend std::istream& operator>>(std::istream &os, cryptinfo  &e);
 
 	public:
-		uint8_t key[32];
-		uint8_t iv[AES_BLOCK_SIZE];
+		uint8_t key[33];
+		uint8_t iv[AES_BLOCK_SIZE + 1];
 
 		void fillkeyiv()
 		{
 			debug("creating new key and iv for a cryptinfo");
 			debug("creating key");
-			RAND_bytes(key, sizeof(key));
+			RAND_bytes(key, sizeof(key) -  1);
+			key[32] = '\0'; //always null terminate our data so we can toString() (hope that works out lol)
 			debug("creating iv");
-			RAND_bytes(iv, sizeof(iv));
+			RAND_bytes(iv, sizeof(iv) - 1);
+			iv[16] = '\0';
 			debug("creating new key and iv good");
 		}
 
@@ -124,6 +126,26 @@ namespace ga {
 				return -1;
 			}
 		}
+
+		std::string keyToString()
+		{
+			return (const char*)key;
+		}
+
+		std::string ivToString()
+		{
+			return (const char*)iv;
+		}
+
+		void keyFromString(std::string key)
+		{
+			strcpy((char*)this->key, key.c_str());
+		}
+
+		void ivFromString(std::string iv)
+		{
+			strcpy((char*)this->iv, iv.c_str());
+		}
 	};
 
 	std::ostream& operator<<(std::ostream &os, const  cryptinfo  &e)
@@ -134,12 +156,14 @@ namespace ga {
 		{
 			os << e.key[i];
 		}
+		os << e.key[32];
 		debug("key written");
 		debug("writing iv");
 		for (int i = 0; i < AES_BLOCK_SIZE; i++)
 		{
 			os << e.iv[i];
 		}
+		os << e.iv[16];
 		debug("iv written");
 		debug("writing cryptinfo to stream good");
 		return os;
@@ -149,15 +173,15 @@ namespace ga {
 	{
 		debug("writing cryptinfo key and iv to buffer");
 		debug("writing key");
-		for (int i = 0; i < 32; i++)
+		for (int i = 0; i < 33; i++)
 		{
 			os[i] = e.key[i];
 		}
 		debug("key written");
 		debug("writing iv");
-		for (int i = 32; i < 32 + AES_BLOCK_SIZE; i++)
+		for (int i = 33, j = 0; i < 33 + AES_BLOCK_SIZE + 1; ++i, ++j)
 		{
-			os[i] = e.iv[i];
+			os[i] = e.iv[j];
 		}
 		debug("iv written");
 		debug("writing cryptinfo to buffer good");
@@ -168,13 +192,13 @@ namespace ga {
 	{
 		debug("reading key and iv from stream into cryptinfo");
 		debug("reading key");
-		for (int i = 0; i < 32; i++)
+		for (int i = 0; i < 33; i++)
 		{
 			os >> e.key[i];
 		}
 		debug("key read");
 		debug("reading iv");
-		for (int i = 0; i < AES_BLOCK_SIZE; i++)
+		for (int i = 0; i < AES_BLOCK_SIZE + 1; i++)
 		{
 			os >> e.iv[i];
 		}
@@ -187,13 +211,13 @@ namespace ga {
 	{
 		debug("reading key and iv from buffer into cryptinfo");
 		debug("reading key");
-		for (int i = 0; i < 32; i++)
+		for (int i = 0; i < 33; i++)
 		{
 			e.key[i] = os[i];
 		}
 		debug("key read");
 		debug("reading iv");
-		for (int i = 32; i < 32 + AES_BLOCK_SIZE; i++)
+		for (int i = 33; i < 33 + AES_BLOCK_SIZE + 1; i++)
 		{
 			e.iv[i] = os[i];
 		}
