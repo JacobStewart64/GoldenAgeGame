@@ -1,5 +1,6 @@
 #pragma once
 #include "stdafx.h"
+#include "Sleeper.h"
 #include <GoldenAge/debug.h>
 #include <GoldenAge/cryptinfo.h>
 #include <GoldenAge/array_packet.h>
@@ -24,6 +25,7 @@ namespace ga {
 		std::unordered_map<irr::u32, std::string> gsitemmap;
 		httplib::SSLClient* client;
 		std::vector<std::thread> threads;
+		std::vector<ga::sleeper*> sleepers; //dynamically allocated because of copy constructor issues (new + delete)
 		unsigned int* runloop;
 
 	public:
@@ -232,20 +234,26 @@ namespace ga {
 		void resetStatusMessageTimeout()
 		{
 			debug("pushing status timeout thread onto thread array");
-			threads.push_back(std::thread([this]() {
-				Sleep(5000);
+			ga::sleeper* sleep = new ga::sleeper();
+			threads.push_back(std::thread([this, sleep]() {
+				sleep->sleepFor(std::chrono::milliseconds(3000));
 				statusmsg->setText(L"");
 			}));
+			sleepers.push_back(sleep);
 			debug("pushing status timeout thread good");
 		}
 
 		void jointhreads()
 		{
 			debug("joining threads");
-			for (std::thread& t : threads)
+			for (int i = 0; i < threads.size(); ++i)
 			{
-				debug("joining thread ", t.get_id());
-				t.join();
+				sleepers[i]->wake();
+				if (threads[i].joinable())
+				{
+					threads[i].join();
+				}
+				delete sleepers[i];
 			}
 			debug("joining threads good");
 		}
