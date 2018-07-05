@@ -45,7 +45,7 @@ An MMO made with Irrlicht, cpp-httplib, OpenSSL, and ENet in Visual Studio 2017
 # THINGS TO WORK ON
 - There are a few places yet where I'm repeating code. Try to keep it high and tight, productivity goes up.
 - Threads... how do u do those lol
-- I wanna fork my game server and login server!
+- There is a hard to reproduce bug in it somewhere, maybe more than one lol.
 
 *note - you will want to replace the stuff in any Auth folder, as it is compromised due to it being publicly available on Github lol. I will put instructions someday. I want this to be a well documented project that can take n00bs on an epic journey lol.
 
