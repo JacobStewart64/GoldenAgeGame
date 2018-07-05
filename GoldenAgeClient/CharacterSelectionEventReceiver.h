@@ -6,27 +6,59 @@
 #include <unordered_map>
 
 extern irr::gui::IGUIEnvironment* env;
+extern irr::video::ITexture* bg;
+extern irr::video::IVideoDriver* driver;
+extern irr::scene::ISceneManager* smgr;
 
 namespace ga {
-
 	class CharacterSelectEventReceiver : public irr::IEventReceiver
 	{
 		//draw the toon!
+
 		irr::gui::IGUIListBox* toon_select_box;
 		irr::gui::IGUIButton* toon_select_button;
 		irr::gui::IGUIButton* options_button;
-		std::unordered_map<std::string, ga::toongraphics> toon_name_to_graphics;
-		std::unordered_map<unsigned int, std::string> toon_id_to_name;
+		std::vector<toon>* toons;
 
 	public:
 		CharacterSelectEventReceiver() {}
 
-		CharacterSelectEventReceiver(std::vector<ga::toon> mytoons)
+		void setup()
 		{
-			toon_select_box = env->addListBox(irr::core::rect<irr::s32>(300, 210, 500, 290), 0, 1);
-			toon_select_button = env->addButton(irr::core::rect<irr::s32>(350, 500, 450, 530), 0, 1, L"Login", L"Login");
-			options_button = env->addButton(irr::core::rect<irr::s32>(350, 500, 450, 530), 0, 2, L"Login", L"Login");
-			//initialize map of uint to toongraphic
+			smgr->addCameraSceneNode(0, irr::core::vector3df(0, 30, -40), irr::core::vector3df(0, 5, 0));
+			bg = driver->getTexture("./system/resources/textures/CharacterSelectBG.png");
+			toon_select_box = env->addListBox(irr::core::rect<irr::s32>(450, 50, 750, 750), 0, 1, true);
+			toon_select_button = env->addButton(irr::core::rect<irr::s32>(310, 700, 410, 750), 0, 1, L"Login", L"Login");
+			options_button = env->addButton(irr::core::rect<irr::s32>(185, 700, 285, 750), 0, 2, L"Login", L"Login");
+		}
+
+		void init_toon_select_box(std::vector<toon>& toons)
+		{
+			//I have all the toon graphics, which represent the character's equipment models.
+			//the character will be represented by something else I guess. There's a lot of little
+			//id that I have to make to represent everything for the gameserver and client.
+			this->toons = &toons;
+			bool firsttime = true;
+			for (toon& t : toons)
+			{
+				wchar_t buf[LOGINBUFFERMAX];
+				mbstowcs(buf, t.name.c_str(), t.name.size());
+				unsigned int i = toon_select_box->addItem(buf);
+				if (firsttime)
+				{
+					toon_select_box->setSelected(buf);
+					firsttime = false;
+				}
+			}
+		}
+
+		toon* getSelectedToon()
+		{
+			return &(*toons)[toon_select_box->getSelected()];
+		}
+
+		void openOptions()
+		{
 
 		}
 
@@ -61,26 +93,5 @@ namespace ga {
 			}
 			return false;
 		}
-
-		void setupGameServerMenu()
-		{
-
-		}
-
-		void getSelectedToon(std::string& str)
-		{
-			debug("getting id of selected toon");
-			irr::u32 id = toon_select_box->getSelected();
-			debug("id: ", id);
-			debug("looking in toon map with id");
-			str = toon_id_to_name.at(id);
-			debug("found string: ", str);
-		}
-
-		void openOptions()
-		{
-
-		}
 	};
-
 }
