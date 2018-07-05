@@ -212,7 +212,6 @@ namespace ga {
 				debug("client secret key for this session: ", sk.to_string());
 				debug("connecting to the game server...");
 				device->setEventReceiver(rec);
-				//*rec = CharacterSelectEventReceiver();
 				*runloop = false;
 				jointhreads(); //this will be destructed. join any threads.
 			}
