@@ -1,6 +1,7 @@
 #pragma once
 #include "stdafx.h"
 #include "Sleeper.h"
+#include "CharacterSelectionEventReceiver.h"
 #include <GoldenAge/debug.h>
 #include <GoldenAge/cryptinfo.h>
 #include <GoldenAge/array_packet.h>
@@ -9,6 +10,7 @@
 #include <GoldenAge/secretkey.h>
 
 extern irr::gui::IGUIEnvironment* env;
+extern irr::IrrlichtDevice* device;
 extern ga::cryptinfo ci;
 extern ga::secretkey sk;
 extern std::string selected_account;
@@ -26,10 +28,11 @@ namespace ga {
 		httplib::SSLClient* client;
 		std::vector<std::thread> threads;
 		std::vector<ga::sleeper*> sleepers; //dynamically allocated because of copy constructor issues (new + delete)
+		CharacterSelectEventReceiver* rec;
 		unsigned int* runloop;
 
 	public:
-		LoginEventReceiver(httplib::SSLClient& client, unsigned int* runloop)
+		LoginEventReceiver(httplib::SSLClient& client, unsigned int* runloop, CharacterSelectEventReceiver& rec)
 		{
 			debug("constructing LoginEventReceiver");
 			this->client = &client;
@@ -38,6 +41,7 @@ namespace ga {
 			email->setTextAlignment(irr::gui::EGUI_ALIGNMENT::EGUIA_CENTER, irr::gui::EGUI_ALIGNMENT::EGUIA_CENTER);
 			password->setTextAlignment(irr::gui::EGUI_ALIGNMENT::EGUIA_CENTER, irr::gui::EGUI_ALIGNMENT::EGUIA_CENTER);
 			debug("setting alignment good");
+			this->rec = &rec;
 			this->runloop = runloop;
 			debug("constructing LoginEventReceiver good");
 		}
@@ -207,6 +211,8 @@ namespace ga {
 				debug("client ci for this session: ", ci);
 				debug("client secret key for this session: ", sk.to_string());
 				debug("connecting to the game server...");
+				device->setEventReceiver(rec);
+				//*rec = CharacterSelectEventReceiver();
 				*runloop = false;
 				jointhreads(); //this will be destructed. join any threads.
 			}

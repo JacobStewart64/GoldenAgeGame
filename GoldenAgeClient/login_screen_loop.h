@@ -2,6 +2,7 @@
 
 #include "stdafx.h"
 #include "LoginEventReceiver.h"
+#include "CharacterSelectionEventReceiver.h"
 #include <GoldenAge/debug.h>
 #include <GoldenAge/udp_com.h>
 
@@ -9,13 +10,13 @@ extern irr::IrrlichtDevice* device;
 extern irr::video::IVideoDriver* driver;
 
 namespace ga {
-	void loginScreenLoop(irr::video::ITexture* bg, unsigned int& runloop)
+	void loginScreenLoop(irr::video::ITexture* bg, unsigned int& runloop, CharacterSelectEventReceiver& rec)
 	{
 		debug("initializing data for login screen loop");
 		irr::video::ITexture* title = driver->getTexture("./system/resources/textures/GoldenAgeTitle.png");
 		irr::gui::IGUIFont* font = device->getGUIEnvironment()->getBuiltInFont();
 		httplib::SSLClient client("localhost", 1234, 10);
-		LoginEventReceiver receiver(client, &runloop);
+		LoginEventReceiver receiver(client, &runloop, rec);
 		device->setEventReceiver(&receiver);
 		receiver.setupGameServerMenu();
 		receiver.resetStatusMessageTimeout();
