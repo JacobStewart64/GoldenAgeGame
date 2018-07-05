@@ -11,9 +11,14 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GoldenAgeLoginServer", "Gol
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "include", "include", "{FEB37CD5-59CC-4ADA-AAFF-6E2F4C3B74BF}"
 	ProjectSection(SolutionItems) = preProject
+		include\GoldenAge\array_packet.h = include\GoldenAge\array_packet.h
 		include\GoldenAge\cryptinfo.h = include\GoldenAge\cryptinfo.h
-		include\GoldenAge\Debug.h = include\GoldenAge\Debug.h
+		include\GoldenAge\debug.h = include\GoldenAge\debug.h
+		include\GoldenAge\secretkey.h = include\GoldenAge\secretkey.h
+		include\GoldenAge\toon.h = include\GoldenAge\toon.h
+		include\GoldenAge\toongraphics.h = include\GoldenAge\toongraphics.h
 		include\GoldenAge\udp_com.h = include\GoldenAge\udp_com.h
+		include\GoldenAge\wcstrtostdstr.h = include\GoldenAge\wcstrtostdstr.h
 	EndProjectSection
 EndProject
 Global

@@ -1,10 +1,19 @@
 #pragma once
 #include "stdafx.h"
-#include <GoldenAge/Debug.h>
+#include "Sleeper.h"
+#include "CharacterSelectionEventReceiver.h"
+#include <GoldenAge/debug.h>
 #include <GoldenAge/cryptinfo.h>
+#include <GoldenAge/array_packet.h>
+#include <GoldenAge/wcstrtostdstr.h>
+#include <GoldenAge/toongraphics.h>
+#include <GoldenAge/secretkey.h>
 
 extern irr::gui::IGUIEnvironment* env;
-extern cryptinfo ci;
+extern irr::IrrlichtDevice* device;
+extern ga::cryptinfo ci;
+extern ga::secretkey sk;
+extern std::string selected_account;
 
 namespace ga {
 	class LoginEventReceiver : public irr::IEventReceiver
@@ -18,10 +27,12 @@ namespace ga {
 		std::unordered_map<irr::u32, std::string> gsitemmap;
 		httplib::SSLClient* client;
 		std::vector<std::thread> threads;
+		std::vector<ga::sleeper*> sleepers; //dynamically allocated because of copy constructor issues (new + delete)
+		CharacterSelectEventReceiver* rec;
 		unsigned int* runloop;
 
 	public:
-		LoginEventReceiver(httplib::SSLClient& client, unsigned int* runloop)
+		LoginEventReceiver(httplib::SSLClient& client, unsigned int* runloop, CharacterSelectEventReceiver& rec)
 		{
 			debug("constructing LoginEventReceiver");
 			this->client = &client;
@@ -30,15 +41,9 @@ namespace ga {
 			email->setTextAlignment(irr::gui::EGUI_ALIGNMENT::EGUIA_CENTER, irr::gui::EGUI_ALIGNMENT::EGUIA_CENTER);
 			password->setTextAlignment(irr::gui::EGUI_ALIGNMENT::EGUIA_CENTER, irr::gui::EGUI_ALIGNMENT::EGUIA_CENTER);
 			debug("setting alignment good");
+			this->rec = &rec;
 			this->runloop = runloop;
 			debug("constructing LoginEventReceiver good");
-		}
-
-		~LoginEventReceiver()
-		{
-			debug("joining login event receiver threads");
-			jointhreads();
-			debug("joining login event receiver threads good");
 		}
 
 		virtual bool OnEvent(const irr::SEvent& event)
@@ -162,31 +167,27 @@ namespace ga {
 		void makeLoginPost(const char* location, std::shared_ptr<httplib::Response>& res)
 		{
 			debug("login post at ", location);
-			debug("making buffer of size ", LOGINBUFFERMAX + LOGINBUFFERMAX + LOGINBUFFERMAX + 3);
-			char emailspacepassword[LOGINBUFFERMAX + LOGINBUFFERMAX + LOGINBUFFERMAX + 3];
-
-			wcstombs(emailspacepassword, email->getText(), LOGINBUFFERMAX);
-			irr::u32 len = strlen(emailspacepassword);
-
-			*(emailspacepassword + len++) = ' ';
-
-			wcstombs(emailspacepassword + len, password->getText(), LOGINBUFFERMAX);
-			len = strlen(emailspacepassword);
-
-			*(emailspacepassword + len++) = ' ';
-
-			std::string str;
-			getGameServerStringFromSelected(str);
-			memcpy(emailspacepassword + len, str.c_str(), str.size() + 1);
-
-			res = client->Post(location, emailspacepassword, "text/plain");
+			//fill the packet args
+			std::string email_string = wcstrtostdstr16(email->getText());
+			std::string password_string = wcstrtostdstr16(password->getText());
+			std::string selected_server; getGameServerStringFromSelected(selected_server);
+			ga::array_packet packet(
+				ga::array_packet::get_args_size(
+					email_string,
+					password_string,
+					selected_server
+				));
+			packet.fill(email_string, password_string, selected_server);
+			debug("the packet: ", packet.get(), "\n", packet.get(), "\n", packet.get());
+			res = client->Post(location, packet(), "text/plain");
+			selected_account = email_string;
 		}
 
 		void sendLoginPost()
 		{
 			std::shared_ptr<httplib::Response> res;
 			makeLoginPost("/login", res);
-			debug("response body: ", res->body);
+			debug("response body: ", res->body.c_str());
 			if (res->body[0] == '\0')
 			{
 				debug("login failure");
@@ -197,12 +198,24 @@ namespace ga {
 				debug("login success");
 				statusmsg->setText(L"Login Success!");
 				resetStatusMessageTimeout();
-				(char*)res->body.c_str() >> ci;
+				ga::array_packet packet;
+				packet.from_buf(res->body.c_str(), res->body.size());
+				std::string type = packet.get();
+				std::string key = packet.get();
+				std::string iv = packet.get();
+				std::string skstr = packet.get();
+				ci.keyFromString(key);
+				ci.ivFromString(iv);
+				sk.from_string(skstr);
+				debug("established session!");
 				debug("client ci for this session: ", ci);
+				debug("client secret key for this session: ", sk.to_string());
+				debug("connecting to the game server...");
+				device->setEventReceiver(rec);
+				//*rec = CharacterSelectEventReceiver();
 				*runloop = false;
-				//connect to game server
+				jointhreads(); //this will be destructed. join any threads.
 			}
-			//this body needs to let me send packets at my game server
 		}
 
 		void sendCreateAccountPost()
@@ -227,20 +240,26 @@ namespace ga {
 		void resetStatusMessageTimeout()
 		{
 			debug("pushing status timeout thread onto thread array");
-			threads.push_back(std::thread([this]() {
-				Sleep(5000);
+			ga::sleeper* sleep = new ga::sleeper();
+			threads.push_back(std::thread([this, sleep]() {
+				sleep->sleepFor(std::chrono::milliseconds(3000));
 				statusmsg->setText(L"");
 			}));
+			sleepers.push_back(sleep);
 			debug("pushing status timeout thread good");
 		}
 
 		void jointhreads()
 		{
 			debug("joining threads");
-			for (std::thread& t : threads)
+			for (int i = 0; i < threads.size(); ++i)
 			{
-				debug("joining thread ", t.get_id());
-				t.join();
+				sleepers[i]->wake();
+				if (threads[i].joinable())
+				{
+					threads[i].join();
+				}
+				delete sleepers[i];
 			}
 			debug("joining threads good");
 		}

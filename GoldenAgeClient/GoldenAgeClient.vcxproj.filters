@@ -24,7 +24,13 @@
     <ClInclude Include="LoginEventReceiver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="clientloops.h">
+    <ClInclude Include="login_screen_loop.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CharacterSelectionEventReceiver.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sleeper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
