@@ -27,16 +27,7 @@ An MMO made with Irrlicht, cpp-httplib, OpenSSL, and ENet in Visual Studio 2017
   - run nmake test
   - run nmake install (if tests were successful)
 
-# Trying to get everything going for a good login.
-- passwords not stored as plaintext, established key (stored as file on a secure machine).
-- client and login server communicating with TLS 1.3(?) HTTPS
-- login server and game server encrypt UDP communications over my intranet with an established key.
-  - not done!
-- client and game server communicate with encrypted UDP, encryption info is established over secure channels via the login server. Hackers could crack a client, and all they would get is the power to look at their own udp packets in plaintext. It is not critical, there are other ways to figure out the way the game server works anyway. The game server already needs to be aware of that problem.
-  - getting close!
-- we don't use cloud storage or a db. We don't touch the hard disk rarely but for creating accounts or updating account information every once in a while as people play. Plain files and directories will work great? I'm thinking it's better than cloggin the tubes with requests to something like MongoDB. I guess I'll need RAID lol... It's like owning vs renting, you have to mow your own lawn. It will be fun they said! I need a riding lawn mower lol.
-  - I'm a lot farther ahead conceptually than codely lol
-    - Give me a month or two, I'm slow lol. The login is the hard part to me. I've already coded an MMO in Irrlicht but it became a dusty old project from the noob days and I deleted it lol. It never had a login, just gameplay, running around together in a room and auto attacking mobs lol. This time I want to stay on top of organization and take it to the next level with a solid demo made out of placeholder assets. Hopefully I can get some support for creation of the game, or I can sell it all as an MMO starter kit lol. Once I get past Login and auto attacking mobs in the starting area I will be making a private repo and leaving this one to help people. I will make a few youtubes of me adding some of the basic features soon to help n00bs, plus my friend wants to see what's up with this coding stuff lol.
+# Login passable for now, let's do some basic gameplay
 
 # KEWL THINGS
 - the cryptinfo class is ballin. soon it will completely encapsulate the use of libcrypto in my 3 projects with a few modifications. I will make a seperate repo just for it. Super easy to work with cbc encryption through its interface. OpenSSL needs to work on its interface I believe lol.
