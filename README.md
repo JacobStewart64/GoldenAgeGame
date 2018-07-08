@@ -27,7 +27,7 @@ An MMO made with Irrlicht, cpp-httplib, OpenSSL, and ENet in Visual Studio 2017
   - run nmake test
   - run nmake install (if tests were successful)
 
-# Login passable for now, let's do some basic gameplay
+# Next task: THOROUGHLY COMPLETE DESIGN OF PLAYER DATA AND 99% FINISH LOGIN INCLUDING SPAWNING INTO WORLD
 
 # KEWL THINGS
 - the cryptinfo class is ballin. soon it will completely encapsulate the use of libcrypto in my 3 projects with a few modifications. I will make a seperate repo just for it. Super easy to work with cbc encryption through its interface. OpenSSL needs to work on its interface I believe lol.
