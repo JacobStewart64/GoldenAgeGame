@@ -41,3 +41,6 @@ An MMO made with Irrlicht, cpp-httplib, OpenSSL, and ENet in Visual Studio 2017
 *note - you will want to replace the stuff in any Auth folder, as it is compromised due to it being publicly available on Github lol. I will put instructions someday. I want this to be a well documented project that can take n00bs on an epic journey lol.
 
 If you have any advice or criticism to give or you want to help, or make a request, open an issue please!
+
+# LICENSE
+- I'm not 100% sure if my license is legit - but it's the GNU AFFERO GENERAL PUBLIC LICENSE (Version 3, 19 November 2007). You can use this in a commercial project but you must make available all of your code (you must open-source your project as well). With the level of MMO demo I will be creating in the end here, if people rip it off and get big, at least they have to provide all their sick well engineered code created with all their resources as open source lol.
