@@ -9,19 +9,22 @@ extern irr::gui::IGUIEnvironment* env;
 extern irr::video::ITexture* bg;
 extern irr::video::IVideoDriver* driver;
 extern irr::scene::ISceneManager* smgr;
+extern unsigned int runloop;
 
 namespace ga {
 	class CharacterSelectEventReceiver : public irr::IEventReceiver
 	{
-		//draw the toon!
-
 		irr::gui::IGUIListBox* toon_select_box;
 		irr::gui::IGUIButton* toon_select_button;
 		irr::gui::IGUIButton* options_button;
 		std::vector<toon>* toons;
+		udp_com* com;
 
 	public:
-		CharacterSelectEventReceiver() {}
+		CharacterSelectEventReceiver(udp_com* com) 
+		{
+			this->com = com;
+		}
 
 		void setup()
 		{
@@ -76,9 +79,11 @@ namespace ga {
 					debug("irr::gui::EGET_BUTTON_CLICKED");
 					if (id == 1)
 					{
-						//toon_select_button pushed
-						//get id from selected
-						//send packet to game server picking which one
+						std::string ptype("b");
+						std::string selected(std::to_string(toon_select_box->getSelected()));
+						ga::array_packet pack(ga::array_packet::get_args_size(ptype, selected));
+						pack.fill(ptype, selected);
+						com->send(com->getPeer(), pack(), pack.size(), ENET_PACKET_FLAG_RELIABLE);
 					}
 					else if (id == 2)
 					{

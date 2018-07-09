@@ -195,6 +195,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="CharacterSelectionEventReceiver.h" />
+    <ClInclude Include="GameEventReceiver.h" />
     <ClInclude Include="login_screen_loop.h" />
     <ClInclude Include="LoginEventReceiver.h" />
     <ClInclude Include="Sleeper.h" />
