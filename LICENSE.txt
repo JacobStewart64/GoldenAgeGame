@@ -4,7 +4,8 @@ server. This way, if you go on to make a successfull game out of this code I get
 an even playing field. Nothing in this TLDR modifies or purports to amend the following description of the license in
 any way shape or form... it is a layman's explanation that is probably full of holes.]
 
-[EXCEPTION: JACOB MICHAEL STEWART, the creator of this code, can use this code in a private non-open-source project HOWEVER HE WANTS WITH NO REGARD FOR THIS LICENSE, and relicense it as he wishes.]
+[EXCEPTION: JACOB MICHAEL STEWART, the creator of this code, can use this code in a private non-open-source project HOWEVER HE WANTS WITH NO REGARD FOR THIS LICENSE, and relicense it as he wishes. WHAT HE CANNOT DO is use a derivative work that is under
+this license without open-sourcing his project as well.]
                     
                     GNU AFFERO GENERAL PUBLIC LICENSE
                        Version 3, 19 November 2007
