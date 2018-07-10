@@ -6,14 +6,13 @@
 #include <GoldenAge/cryptinfo.h>
 #include <GoldenAge/array_packet.h>
 #include <GoldenAge/wcstrtostdstr.h>
-#include <GoldenAge/toongraphics.h>
 #include <GoldenAge/secretkey.h>
 
 extern irr::gui::IGUIEnvironment* env;
 extern irr::IrrlichtDevice* device;
 extern ga::cryptinfo ci;
 extern ga::secretkey sk;
-extern std::string selected_account;
+extern ga::udp_com com;
 
 namespace ga {
 	class LoginEventReceiver : public irr::IEventReceiver
@@ -29,6 +28,7 @@ namespace ga {
 		std::vector<std::thread> threads;
 		std::vector<ga::sleeper*> sleepers; //dynamically allocated because of copy constructor issues (new + delete)
 		CharacterSelectEventReceiver* rec;
+		std::string selected_account;
 		unsigned int* runloop;
 
 	public:
@@ -214,6 +214,17 @@ namespace ga {
 				device->setEventReceiver(rec);
 				*runloop = false;
 				jointhreads(); //this will be destructed. join any threads.
+
+				std::string typ("a");
+				ga::array_packet pack(
+					ga::array_packet::get_args_size(
+						typ,
+						selected_account,
+						sk.to_string()
+					));
+				pack.fill(typ, selected_account, sk.to_string());
+				Sleep(75);
+				com.send(com.getPeer(), pack(), pack.size(), ENET_PACKET_FLAG_RELIABLE);
 			}
 		}
 
