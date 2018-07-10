@@ -11,6 +11,7 @@ extern irr::video::IVideoDriver* driver;
 extern irr::scene::ISceneManager* smgr;
 extern unsigned int runloop;
 extern ga::udp_com com;
+extern irr::scene::ICameraSceneNode* camera;
 
 namespace ga {
 	class GameEventReceiver : public irr::IEventReceiver
@@ -18,11 +19,6 @@ namespace ga {
 
 	public:
 		GameEventReceiver()	{}
-
-		void setup()
-		{
-			smgr->addCameraSceneNode(0, irr::core::vector3df(0, 30, -40), irr::core::vector3df(0, 5, 0));
-		}
 
 		virtual bool OnEvent(const irr::SEvent& event)
 		{

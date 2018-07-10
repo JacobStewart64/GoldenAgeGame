@@ -33,7 +33,6 @@ namespace ga {
 
 		void setup()
 		{
-			smgr->addCameraSceneNode(0, irr::core::vector3df(0, 30, -40), irr::core::vector3df(0, 5, 0));
 			bg = driver->getTexture("./system/resources/textures/CharacterSelectBG.png");
 			toon_select_box = env->addListBox(irr::core::rect<irr::s32>(450, 50, 750, 750), 0, 1, true);
 			toon_select_button = env->addButton(irr::core::rect<irr::s32>(310, 700, 410, 750), 0, 1, L"Login", L"Login");
