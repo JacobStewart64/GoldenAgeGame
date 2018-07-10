@@ -1,6 +1,4 @@
 #pragma once
-#include <GoldenAge/toongraphics.h>
-#include <irrlicht.h>
 #include <string>
 #include <sstream>
 #include <any>
@@ -9,6 +7,10 @@ namespace ga {
 	struct random_property {
 		unsigned char what;
 		unsigned char roll;
+
+		random_property() {}
+
+		random_property(bool b) : what(0), roll(0) {}
 
 		void from_string(std::string str)
 		{
@@ -47,6 +49,10 @@ namespace ga {
 		unsigned char id;
 		random_property props[3];
 
+		insertable() {}
+
+		insertable(bool b) : id(0), props{ random_property(true), random_property(true), random_property(true) } {}
+
 		void from_string(std::string str)
 		{
 			std::stringstream ss(str);
@@ -70,7 +76,7 @@ namespace ga {
 		os << e.id << "\n";
 		for (int i = 0; i < 3; i++)
 		{
-			os << e.props[i];
+			os << e.props[i] << "\n";
 		}
 		os << "\n";
 		return os;
@@ -90,6 +96,10 @@ namespace ga {
 	struct socket {
 		bool isactive;
 		insertable in;
+
+		socket() {}
+
+		socket(bool b) : isactive(false), in(true) {}
 
 		void from_string(std::string str)
 		{
@@ -131,6 +141,11 @@ namespace ga {
 		unsigned char grind;
 		unsigned char enchant;
 
+		headgear() {}
+
+		headgear(bool b) : id(0), props{ random_property(true), random_property(true), random_property(true), random_property(true) },
+			sock{ socket(true), socket(true), socket(true), socket(true) }, grind(0), enchant(0) {}
+
 		void from_string(std::string str)
 		{
 			std::stringstream ss(str);
@@ -154,12 +169,12 @@ namespace ga {
 		os << e.id << "\n";
 		for (int i = 0; i < 4; i++)
 		{
-			os << e.props[i];
+			os << e.props[i] << "\n";
 		}
 		os << "\n";
 		for (int i = 0; i < 4; i++)
 		{
-			os << e.sock[i];
+			os << e.sock[i] << "\n";
 		}
 		os << "\n";
 		os << e.grind << "\n";
@@ -191,6 +206,11 @@ namespace ga {
 		unsigned char grind;
 		unsigned char enchant;
 
+		shouldergear() {}
+
+		shouldergear(bool b) : id(0), props{ random_property(true), random_property(true), random_property(true), random_property(true) },
+			sock{ socket(true), socket(true), socket(true), socket(true) }, grind(0), enchant(0) {}
+
 		void from_string(std::string str)
 		{
 			std::stringstream ss(str);
@@ -214,12 +234,12 @@ namespace ga {
 		os << e.id << "\n";
 		for (int i = 0; i < 4; i++)
 		{
-			os << e.props[i];
+			os << e.props[i] << "\n";
 		}
 		os << "\n";
 		for (int i = 0; i < 4; i++)
 		{
-			os << e.sock[i];
+			os << e.sock[i] << "\n";
 		}
 		os << "\n";
 		os << e.grind << "\n";
@@ -251,6 +271,11 @@ namespace ga {
 		unsigned char grind;
 		unsigned char enchant;
 
+		chestgear() {}
+
+		chestgear(bool b) : id(0), props{ random_property(true), random_property(true), random_property(true), random_property(true), random_property(true), random_property(true), random_property(true) },
+			sock{ socket(true), socket(true), socket(true), socket(true), socket(true), socket(true) }, grind(0), enchant(0) {}
+
 		void from_string(std::string str)
 		{
 			std::stringstream ss(str);
@@ -274,12 +299,12 @@ namespace ga {
 		os << e.id << "\n";
 		for (int i = 0; i < 7; i++)
 		{
-			os << e.props[i];
+			os << e.props[i] << "\n";
 		}
 		os << "\n";
 		for (int i = 0; i < 6; i++)
 		{
-			os << e.sock[i];
+			os << e.sock[i] << "\n";
 		}
 		os << "\n";
 		os << e.grind << "\n";
@@ -311,6 +336,11 @@ namespace ga {
 		unsigned char grind;
 		unsigned char enchant;
 
+		glovegear() {}
+
+		glovegear(bool b) : id(0), props{ random_property(true), random_property(true), random_property(true), random_property(true) },
+			sock{ socket(true), socket(true), socket(true), socket(true) }, grind(0), enchant(0) {}
+
 		void from_string(std::string str)
 		{
 			std::stringstream ss(str);
@@ -334,12 +364,12 @@ namespace ga {
 		os << e.id << "\n";
 		for (int i = 0; i < 4; i++)
 		{
-			os << e.props[i];
+			os << e.props[i] << "\n";
 		}
 		os << "\n";
 		for (int i = 0; i < 4; i++)
 		{
-			os << e.sock[i];
+			os << e.sock[i] << "\n";
 		}
 		os << "\n";
 		os << e.grind << "\n";
@@ -371,6 +401,11 @@ namespace ga {
 		unsigned char grind;
 		unsigned char enchant;
 
+		beltgear() {}
+
+		beltgear(bool b) : id(0), props{ random_property(true), random_property(true), random_property(true), random_property(true) },
+			sock{ socket(true), socket(true), socket(true), socket(true) }, grind(0), enchant(0) {}
+
 		void from_string(std::string str)
 		{
 			std::stringstream ss(str);
@@ -394,12 +429,12 @@ namespace ga {
 		os << e.id << "\n";
 		for (int i = 0; i < 4; i++)
 		{
-			os << e.props[i];
+			os << e.props[i] << "\n";
 		}
 		os << "\n";
 		for (int i = 0; i < 4; i++)
 		{
-			os << e.sock[i];
+			os << e.sock[i] << "\n";
 		}
 		os << "\n";
 		os << e.grind << "\n";
@@ -431,6 +466,11 @@ namespace ga {
 		unsigned char grind;
 		unsigned char enchant;
 
+		leggear() {}
+
+		leggear(bool b) : id(0), props{ random_property(true), random_property(true), random_property(true), random_property(true) },
+			sock{ socket(true), socket(true), socket(true), socket(true) }, grind(0), enchant(0) {}
+
 		void from_string(std::string str)
 		{
 			std::stringstream ss(str);
@@ -454,12 +494,12 @@ namespace ga {
 		os << e.id << "\n";
 		for (int i = 0; i < 4; i++)
 		{
-			os << e.props[i];
+			os << e.props[i] << "\n";
 		}
 		os << "\n";
 		for (int i = 0; i < 4; i++)
 		{
-			os << e.sock[i];
+			os << e.sock[i] << "\n";
 		}
 		os << "\n";
 		os << e.grind << "\n";
@@ -490,6 +530,11 @@ namespace ga {
 		socket sock[4];
 		unsigned char grind;
 		unsigned char enchant;
+		
+		bootgear() {}
+
+		bootgear(bool b) : id(0), props{ random_property(true), random_property(true), random_property(true), random_property(true) },
+			sock{ socket(true), socket(true), socket(true), socket(true) }, grind(0), enchant(0) {}
 
 		void from_string(std::string str)
 		{
@@ -514,12 +559,12 @@ namespace ga {
 		os << e.id << "\n";
 		for (int i = 0; i < 4; i++)
 		{
-			os << e.props[i];
+			os << e.props[i] << "\n";
 		}
 		os << "\n";
 		for (int i = 0; i < 4; i++)
 		{
-			os << e.sock[i];
+			os << e.sock[i] << "\n";
 		}
 		os << "\n";
 		os << e.grind << "\n";
@@ -551,6 +596,11 @@ namespace ga {
 		unsigned char grind;
 		unsigned char enchant;
 
+		amuletgear() {}
+
+		amuletgear(bool b) : id(0), props{ random_property(true), random_property(true), random_property(true), random_property(true), random_property(true), random_property(true), random_property(true) },
+			sock(true), grind(0), enchant(0) {}
+
 		void from_string(std::string str)
 		{
 			std::stringstream ss(str);
@@ -574,7 +624,7 @@ namespace ga {
 		os << e.id << "\n";
 		for (int i = 0; i < 7; i++)
 		{
-			os << e.props[i];
+			os << e.props[i] << "\n";
 		}
 		os << "\n";
 		os << e.sock << "\n";
@@ -604,6 +654,11 @@ namespace ga {
 		unsigned char grind;
 		unsigned char enchant;
 
+		ringgear() {}
+
+		ringgear(bool b) : id(0), props{ random_property(true), random_property(true), random_property(true), random_property(true) },
+			sock(true), grind(0), enchant(0) {}
+
 		void from_string(std::string str)
 		{
 			std::stringstream ss(str);
@@ -627,7 +682,7 @@ namespace ga {
 		os << e.id << "\n";
 		for (int i = 0; i < 4; i++)
 		{
-			os << e.props[i];
+			os << e.props[i] << "\n";
 		}
 		os << "\n";
 		os << e.sock << "\n";
@@ -661,6 +716,10 @@ namespace ga {
 		amuletgear amulet;
 		ringgear ring1;
 		ringgear ring2;
+
+		gear() {}
+
+		gear(bool b) : head(true), shoulder(true), chest(true), glove(true), belt(true), leg(true), boot(true), amulet(true), ring1(true), ring2(true) {}
 
 		void from_string(std::string str)
 		{
@@ -725,6 +784,10 @@ namespace ga {
 		unsigned char ench;
 		unsigned char merch;
 
+		skills() {}
+
+		skills(bool b) : str(1), agi(1), inte(1), bs(1), cloth(1), leather(1), ww(1), wc(1), mine(1), skin(1), ench(1), merch(1) {}
+
 		void from_string(std::string str)
 		{
 			std::stringstream ss(str);
@@ -782,6 +845,10 @@ namespace ga {
 		unsigned char type;
 		unsigned char id;
 
+		item() {}
+
+		item(bool b) : type(0), id(0) {}
+
 		void from_string(std::string str)
 		{
 			std::stringstream ss(str);
@@ -818,6 +885,14 @@ namespace ga {
 	struct inventory {
 		std::any items[30];
 
+		inventory() {}
+
+		inventory(bool b) : items{ std::any(item(true)), std::any(item(true)), std::any(item(true)), std::any(item(true)), std::any(item(true)), std::any(item(true)),
+			std::any(item(true)), std::any(item(true)), std::any(item(true)), std::any(item(true)), std::any(item(true)), std::any(item(true)),
+			std::any(item(true)), std::any(item(true)), std::any(item(true)), std::any(item(true)), std::any(item(true)), std::any(item(true)),
+			std::any(item(true)), std::any(item(true)), std::any(item(true)), std::any(item(true)), std::any(item(true)), std::any(item(true)), 
+			std::any(item(true)), std::any(item(true)), std::any(item(true)), std::any(item(true)), std::any(item(true)), std::any(item(true)) } {}
+
 		void from_string(std::string str)
 		{
 			std::stringstream ss(str);
@@ -843,52 +918,52 @@ namespace ga {
 			if (e.items[i].type() == typeid(item))
 			{
 				os << 1 << "\n";
-				os << std::any_cast<item>(e.items[i]);
+				os << std::any_cast<item>(e.items[i]) << "\n";
 			}
 			else if (e.items[i].type() == typeid(headgear))
 			{
 				os << 2 << "\n";
-				os << std::any_cast<headgear>(e.items[i]);
+				os << std::any_cast<headgear>(e.items[i]) << "\n";
 			}
 			else if (e.items[i].type() == typeid(shouldergear))
 			{
 				os << 3 << "\n";
-				os << std::any_cast<shouldergear>(e.items[i]);
+				os << std::any_cast<shouldergear>(e.items[i]) << "\n";
 			}
 			else if (e.items[i].type() == typeid(chestgear))
 			{
 				os << 4 << "\n";
-				os << std::any_cast<chestgear>(e.items[i]);
+				os << std::any_cast<chestgear>(e.items[i]) << "\n";
 			}
 			else if (e.items[i].type() == typeid(glovegear))
 			{
 				os << 5 << "\n";
-				os << std::any_cast<glovegear>(e.items[i]);
+				os << std::any_cast<glovegear>(e.items[i]) << "\n";
 			}
 			else if (e.items[i].type() == typeid(beltgear))
 			{
 				os << 6 << "\n";
-				os << std::any_cast<beltgear>(e.items[i]);
+				os << std::any_cast<beltgear>(e.items[i]) << "\n";
 			}
 			else if (e.items[i].type() == typeid(leggear))
 			{
 				os << 7 << "\n";
-				os << std::any_cast<leggear>(e.items[i]);
+				os << std::any_cast<leggear>(e.items[i]) << "\n";
 			}
 			else if (e.items[i].type() == typeid(bootgear))
 			{
 				os << 8 << "\n";
-				os << std::any_cast<bootgear>(e.items[i]);
+				os << std::any_cast<bootgear>(e.items[i]) << "\n";
 			}
 			else if (e.items[i].type() == typeid(amuletgear))
 			{
 				os << 9 << "\n";
-				os << std::any_cast<amuletgear>(e.items[i]);
+				os << std::any_cast<amuletgear>(e.items[i]) << "\n";
 			}
 			else if (e.items[i].type() == typeid(ringgear))
 			{
 				os << 10 << "\n";
-				os << std::any_cast<ringgear>(e.items[i]);
+				os << std::any_cast<ringgear>(e.items[i]) << "\n";
 			}
 			else
 			{
@@ -977,6 +1052,26 @@ namespace ga {
 	struct bank {
 		std::any items[100];
 
+		bank() {}
+
+		bank(bool b) : items{ std::any(item(true)), std::any(item(true)), std::any(item(true)), std::any(item(true)), std::any(item(true)), std::any(item(true)),
+			std::any(item(true)), std::any(item(true)), std::any(item(true)), std::any(item(true)), std::any(item(true)), std::any(item(true)),
+			std::any(item(true)), std::any(item(true)), std::any(item(true)), std::any(item(true)), std::any(item(true)), std::any(item(true)),
+			std::any(item(true)), std::any(item(true)), std::any(item(true)), std::any(item(true)), std::any(item(true)), std::any(item(true)),
+			std::any(item(true)), std::any(item(true)), std::any(item(true)), std::any(item(true)), std::any(item(true)), std::any(item(true)),
+			std::any(item(true)), std::any(item(true)), std::any(item(true)), std::any(item(true)), std::any(item(true)), std::any(item(true)),
+			std::any(item(true)), std::any(item(true)), std::any(item(true)), std::any(item(true)), std::any(item(true)), std::any(item(true)),
+			std::any(item(true)), std::any(item(true)), std::any(item(true)), std::any(item(true)), std::any(item(true)), std::any(item(true)),
+			std::any(item(true)), std::any(item(true)), std::any(item(true)), std::any(item(true)), std::any(item(true)), std::any(item(true)),
+			std::any(item(true)), std::any(item(true)), std::any(item(true)), std::any(item(true)), std::any(item(true)), std::any(item(true)), 
+			std::any(item(true)), std::any(item(true)), std::any(item(true)), std::any(item(true)), std::any(item(true)), std::any(item(true)),
+			std::any(item(true)), std::any(item(true)), std::any(item(true)), std::any(item(true)), std::any(item(true)), std::any(item(true)),
+			std::any(item(true)), std::any(item(true)), std::any(item(true)), std::any(item(true)), std::any(item(true)), std::any(item(true)),
+			std::any(item(true)), std::any(item(true)), std::any(item(true)), std::any(item(true)), std::any(item(true)), std::any(item(true)),
+			std::any(item(true)), std::any(item(true)), std::any(item(true)), std::any(item(true)), std::any(item(true)), std::any(item(true)),
+			std::any(item(true)), std::any(item(true)), std::any(item(true)), std::any(item(true)),
+			std::any(item(true)), std::any(item(true)), std::any(item(true)), std::any(item(true)), std::any(item(true)), std::any(item(true)) } {}
+
 		void from_string(std::string str)
 		{
 			std::stringstream ss(str);
@@ -1002,52 +1097,52 @@ namespace ga {
 			if (e.items[i].type() == typeid(item))
 			{
 				os << 1 << "\n";
-				os << std::any_cast<item>(e.items[i]);
+				os << std::any_cast<item>(e.items[i]) << "\n";
 			}
 			else if (e.items[i].type() == typeid(headgear))
 			{
 				os << 2 << "\n";
-				os << std::any_cast<headgear>(e.items[i]);
+				os << std::any_cast<headgear>(e.items[i]) << "\n";
 			}
 			else if (e.items[i].type() == typeid(shouldergear))
 			{
 				os << 3 << "\n";
-				os << std::any_cast<shouldergear>(e.items[i]);
+				os << std::any_cast<shouldergear>(e.items[i]) << "\n";
 			}
 			else if (e.items[i].type() == typeid(chestgear))
 			{
 				os << 4 << "\n";
-				os << std::any_cast<chestgear>(e.items[i]);
+				os << std::any_cast<chestgear>(e.items[i]) << "\n";
 			}
 			else if (e.items[i].type() == typeid(glovegear))
 			{
 				os << 5 << "\n";
-				os << std::any_cast<glovegear>(e.items[i]);
+				os << std::any_cast<glovegear>(e.items[i]) << "\n";
 			}
 			else if (e.items[i].type() == typeid(beltgear))
 			{
 				os << 6 << "\n";
-				os << std::any_cast<beltgear>(e.items[i]);
+				os << std::any_cast<beltgear>(e.items[i]) << "\n";
 			}
 			else if (e.items[i].type() == typeid(leggear))
 			{
 				os << 7 << "\n";
-				os << std::any_cast<leggear>(e.items[i]);
+				os << std::any_cast<leggear>(e.items[i]) << "\n";
 			}
 			else if (e.items[i].type() == typeid(bootgear))
 			{
 				os << 8 << "\n";
-				os << std::any_cast<bootgear>(e.items[i]);
+				os << std::any_cast<bootgear>(e.items[i]) << "\n";
 			}
 			else if (e.items[i].type() == typeid(amuletgear))
 			{
 				os << 9 << "\n";
-				os << std::any_cast<amuletgear>(e.items[i]);
+				os << std::any_cast<amuletgear>(e.items[i]) << "\n";
 			}
 			else if (e.items[i].type() == typeid(ringgear))
 			{
 				os << 10 << "\n";
-				os << std::any_cast<ringgear>(e.items[i]);
+				os << std::any_cast<ringgear>(e.items[i]) << "\n";
 			}
 			else
 			{
@@ -1136,18 +1231,9 @@ namespace ga {
 	struct quests {
 		unsigned char flags[16];
 
-		void from_string(std::string str)
-		{
-			std::stringstream ss(str);
-			ss >> *this;
-		}
+		quests() {}
 
-		std::string to_string()
-		{
-			std::stringstream ss;
-			ss << *this;
-			return ss.str();
-		}
+		quests(bool b) : flags{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 } {}
 
 	private:
 		friend std::ostream& operator<<(std::ostream &os, const  quests  &e);
@@ -1158,7 +1244,7 @@ namespace ga {
 	{
 		for (int i = 0; i < 16; i++)
 		{
-			os << e.flags[i];
+			os << e.flags[i] << "\n";
 		}
 		os << "\n";
 		return os;
@@ -1183,12 +1269,10 @@ namespace ga {
 		unsigned int ar;
 		unsigned int mr;
 		unsigned char ls;
-	};
 
+		derivedstats() {}
 
-	struct world_position {
-		unsigned char row;
-		unsigned char col;
+		derivedstats(bool b) : hp(0), mp(0), ad(0), atsp(0), ap(0), ar(0), mr(0), ls(0) {}
 
 		void from_string(std::string str)
 		{
@@ -1202,6 +1286,46 @@ namespace ga {
 			ss << *this;
 			return ss.str();
 		}
+
+	private:
+		friend std::ostream& operator<<(std::ostream &os, const  derivedstats  &e);
+		friend std::istream& operator>>(std::istream &os, derivedstats  &e);
+	};
+
+	std::ostream& operator<<(std::ostream &os, const  derivedstats  &e)
+	{
+		os << e.hp << "\n";
+		os << e.mp << "\n";
+		os << e.ad << "\n";
+		os << e.atsp << "\n";
+		os << e.ap << "\n";
+		os << e.ar << "\n";
+		os << e.mr << "\n";
+		os << e.ls << "\n";
+		return os;
+	}
+
+	std::istream& operator>>(std::istream &os, derivedstats  &e)
+	{
+		os >> e.hp;
+		os >> e.mp;
+		os >> e.ad;
+		os >> e.atsp;
+		os >> e.ap;
+		os >> e.ar;
+		os >> e.mr;
+		os >> e.ls;
+		return os;
+	}
+
+
+	struct world_position {
+		unsigned char row;
+		unsigned char col;
+
+		world_position() {}
+
+		world_position(bool b) : row(0), col(0) {}
 
 	private:
 		friend std::ostream& operator<<(std::ostream &os, const  world_position  &e);
@@ -1235,6 +1359,10 @@ namespace ga {
 		world_position pos;
 		irr::core::vector3df vpos;
 
+		toon() {}
+
+		toon(bool b) : name(""), tg(true), ts(true), ti(true), tb(true), tq(true), job(0), tds(true), pos(true), vpos(500, 25, 500) {}
+
 		toon(std::string& name)
 		{
 			this->name = name;
@@ -1266,6 +1394,7 @@ namespace ga {
 		os << e.tb << "\n";
 		os << e.tq << "\n";
 		os << e.job << "\n";
+		os << e.tds << "\n";
 		os << e.pos << "\n";
 		os << e.vpos.X << "\n";
 		os << e.vpos.Y << "\n";
@@ -1281,6 +1410,7 @@ namespace ga {
 		os >> e.tb;
 		os >> e.tq;
 		os >> e.job;
+		os >> e.tds;
 		os >> e.pos;
 		os >> e.vpos.X;
 		os >> e.vpos.Y;

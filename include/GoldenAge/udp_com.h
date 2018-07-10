@@ -8,10 +8,12 @@
 
 #define USEENETINTERNALBANDWIDTHALG 0
 
+//these definitions allow lambda capture - does not convert to lpfunction
 typedef std::function<void(ENetEvent&)> efunc;
 typedef std::function<void(ENetPeer*)> pfunc;
 typedef std::function<unsigned int(unsigned int)> dfunc;
 typedef std::function<void(unsigned int)> tfunc;
+
 namespace ga {
 	class udp_com {
 		ENetEvent e;

@@ -36,6 +36,9 @@
     <ClInclude Include="GameEventReceiver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="client_toon.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

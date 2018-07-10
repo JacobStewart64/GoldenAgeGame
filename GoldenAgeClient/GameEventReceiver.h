@@ -10,17 +10,14 @@ extern irr::video::ITexture* bg;
 extern irr::video::IVideoDriver* driver;
 extern irr::scene::ISceneManager* smgr;
 extern unsigned int runloop;
+extern ga::udp_com com;
 
 namespace ga {
 	class GameEventReceiver : public irr::IEventReceiver
 	{
-		udp_com* com;
 
 	public:
-		GameEventReceiver(udp_com* com)
-		{
-			this->com = com;
-		}
+		GameEventReceiver()	{}
 
 		void setup()
 		{

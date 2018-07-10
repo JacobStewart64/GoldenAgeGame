@@ -16,7 +16,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "include", "include", "{FEB3
 		include\GoldenAge\debug.h = include\GoldenAge\debug.h
 		include\GoldenAge\secretkey.h = include\GoldenAge\secretkey.h
 		include\GoldenAge\toon.h = include\GoldenAge\toon.h
-		include\GoldenAge\toongraphics.h = include\GoldenAge\toongraphics.h
 		include\GoldenAge\udp_com.h = include\GoldenAge\udp_com.h
 		include\GoldenAge\wcstrtostdstr.h = include\GoldenAge\wcstrtostdstr.h
 	EndProjectSection
@@ -25,6 +24,8 @@ Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
 		Debug|x86 = Debug|x86
+		mydebug|x64 = mydebug|x64
+		mydebug|x86 = mydebug|x86
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
 	EndGlobalSection
@@ -33,6 +34,10 @@ Global
 		{C164B1B2-0E8F-4290-B601-A4B7605F3F03}.Debug|x64.Build.0 = Debug|x64
 		{C164B1B2-0E8F-4290-B601-A4B7605F3F03}.Debug|x86.ActiveCfg = Debug|Win32
 		{C164B1B2-0E8F-4290-B601-A4B7605F3F03}.Debug|x86.Build.0 = Debug|Win32
+		{C164B1B2-0E8F-4290-B601-A4B7605F3F03}.mydebug|x64.ActiveCfg = Release|x64
+		{C164B1B2-0E8F-4290-B601-A4B7605F3F03}.mydebug|x64.Build.0 = Release|x64
+		{C164B1B2-0E8F-4290-B601-A4B7605F3F03}.mydebug|x86.ActiveCfg = Release|Win32
+		{C164B1B2-0E8F-4290-B601-A4B7605F3F03}.mydebug|x86.Build.0 = Release|Win32
 		{C164B1B2-0E8F-4290-B601-A4B7605F3F03}.Release|x64.ActiveCfg = Release|x64
 		{C164B1B2-0E8F-4290-B601-A4B7605F3F03}.Release|x64.Build.0 = Release|x64
 		{C164B1B2-0E8F-4290-B601-A4B7605F3F03}.Release|x86.ActiveCfg = Release|Win32
@@ -41,6 +46,10 @@ Global
 		{4226FB02-4728-47DC-8427-2B4E2E3D0950}.Debug|x64.Build.0 = Debug|x64
 		{4226FB02-4728-47DC-8427-2B4E2E3D0950}.Debug|x86.ActiveCfg = Debug|Win32
 		{4226FB02-4728-47DC-8427-2B4E2E3D0950}.Debug|x86.Build.0 = Debug|Win32
+		{4226FB02-4728-47DC-8427-2B4E2E3D0950}.mydebug|x64.ActiveCfg = Debug|x64
+		{4226FB02-4728-47DC-8427-2B4E2E3D0950}.mydebug|x64.Build.0 = Debug|x64
+		{4226FB02-4728-47DC-8427-2B4E2E3D0950}.mydebug|x86.ActiveCfg = mydebug|Win32
+		{4226FB02-4728-47DC-8427-2B4E2E3D0950}.mydebug|x86.Build.0 = mydebug|Win32
 		{4226FB02-4728-47DC-8427-2B4E2E3D0950}.Release|x64.ActiveCfg = Release|x64
 		{4226FB02-4728-47DC-8427-2B4E2E3D0950}.Release|x64.Build.0 = Release|x64
 		{4226FB02-4728-47DC-8427-2B4E2E3D0950}.Release|x86.ActiveCfg = Release|Win32
@@ -49,6 +58,10 @@ Global
 		{E94C1D71-3C65-4BD9-AE18-18F9876E9F7D}.Debug|x64.Build.0 = Debug|x64
 		{E94C1D71-3C65-4BD9-AE18-18F9876E9F7D}.Debug|x86.ActiveCfg = Debug|Win32
 		{E94C1D71-3C65-4BD9-AE18-18F9876E9F7D}.Debug|x86.Build.0 = Debug|Win32
+		{E94C1D71-3C65-4BD9-AE18-18F9876E9F7D}.mydebug|x64.ActiveCfg = Release|x64
+		{E94C1D71-3C65-4BD9-AE18-18F9876E9F7D}.mydebug|x64.Build.0 = Release|x64
+		{E94C1D71-3C65-4BD9-AE18-18F9876E9F7D}.mydebug|x86.ActiveCfg = Release|Win32
+		{E94C1D71-3C65-4BD9-AE18-18F9876E9F7D}.mydebug|x86.Build.0 = Release|Win32
 		{E94C1D71-3C65-4BD9-AE18-18F9876E9F7D}.Release|x64.ActiveCfg = Release|x64
 		{E94C1D71-3C65-4BD9-AE18-18F9876E9F7D}.Release|x64.Build.0 = Release|x64
 		{E94C1D71-3C65-4BD9-AE18-18F9876E9F7D}.Release|x86.ActiveCfg = Release|Win32
