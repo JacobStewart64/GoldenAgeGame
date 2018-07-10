@@ -1361,7 +1361,7 @@ namespace ga {
 
 		toon() {}
 
-		toon(bool b) : name(""), tg(true), ts(true), ti(true), tb(true), tq(true), job(0), tds(true), pos(true), vpos(500, 25, 500) {}
+		toon(bool b) : name(""), tg(true), ts(true), ti(true), tb(true), tq(true), job(0), tds(true), pos(true), vpos(250, 500, 250) {}
 
 		toon(std::string& name)
 		{
