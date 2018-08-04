@@ -197,14 +197,17 @@ namespace ga {
 				last = index;
 				index = res->body.find_first_of(' ', index);
 				std::string key = res->body.substr(last, index - last);
+				debug("key: ", key, "see space?");
 				++index;
 				last = index;
 				index = res->body.find_first_of(' ', index);
 				std::string iv = res->body.substr(last, index - last);
+				debug("iv: ", iv, "see space?");
 				++index;
 				last = index;
 				index = res->body.find_first_of(' ', index);
 				std::string skstr = res->body.substr(last, index - last);
+				debug("skstr: ", skstr, "see space?");
 				ci.keyFromString(key);
 				ci.ivFromString(iv);
 				sk.from_string(skstr);
@@ -224,7 +227,6 @@ namespace ga {
 						sk.to_string()
 					));
 				pack.fill(typ, selected_account, sk.to_string());
-				Sleep(75);
 				com.send(com.getPeer(), pack(), pack.size(), ENET_PACKET_FLAG_RELIABLE);
 			}
 		}

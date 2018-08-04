@@ -10,22 +10,29 @@ namespace ga {
 
 		secretkey(std::string& established_key)
 		{
-			strcpy((char*)buffer, established_key.c_str());
+			from_string(established_key);
 		}
 
 		void generate_random_bytes()
 		{
-			RAND_bytes(buffer, 255);
-			buffer[255] = '\0';
+			RAND_bytes(buffer, 256);
 		}
 
 		std::string to_string() {
-			return (char*)buffer;
+			std::string newstr;
+			for (int i = 0; i < 256; ++i)
+			{
+				newstr.push_back(buffer[i]);
+			}
+			return newstr;
 		}
 
 		void from_string(std::string& sk)
 		{
-			strcpy((char*)buffer, sk.c_str());
+			for (int i = 0; i < 256; ++i)
+			{
+				buffer[i] = sk[i];
+			}			
 		}
 	};
 };

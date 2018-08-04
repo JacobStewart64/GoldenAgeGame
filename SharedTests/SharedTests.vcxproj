@@ -72,8 +72,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\Users\cool_\Documents\GoldenAgeGame\cpp-httplib;C:\Users\cool_\Documents\GoldenAgeGame\irrlicht\include;C:\Users\cool_\Documents\GoldenAgeGame\ENet\include;C:\Users\cool_\Documents\GoldenAgeGame\include;C:\Users\cool_\Documents\GoldenAgeGame\googletest\googletest\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\cool_\Documents\GoldenAgeGame\irrlicht\lib\Win64-visualstudio;C:\Users\cool_\Documents\GoldenAgeGame\ENet\libs;C:\Users\cool_\Documents\GoldenAgeGame\googletest\googletest\msvc\2010\gtest\x64-Debug;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Program Files\OpenSSL\include;C:\Users\cool_\Documents\GoldenAgeGame\cpp-httplib;C:\Users\cool_\Documents\GoldenAgeGame\irrlicht\include;C:\Users\cool_\Documents\GoldenAgeGame\ENet\include;C:\Users\cool_\Documents\GoldenAgeGame\include;C:\Users\cool_\Documents\GoldenAgeGame\googletest\googletest\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Program Files\OpenSSL\lib;C:\Users\cool_\Documents\GoldenAgeGame\irrlicht\lib\Win64-visualstudio;C:\Users\cool_\Documents\GoldenAgeGame\ENet\libs;C:\Users\cool_\Documents\GoldenAgeGame\googletest\googletest\msvc\2010\gtest\x64-Debug;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
@@ -90,7 +90,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>MinSpace</Optimization>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_WINSOCK_DEPRECATED_NO_WARNINGS;_IRR_STATIC_LIB_;CPPHTTPLIB_OPENSSL_SUPPORT;_IRRLICHT_STATICLIB_SUPPORT__DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -103,7 +103,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>Ws2_32.lib;enet64.lib;Irrlicht.lib;gtestd.lib;gtest_maind.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>gtestd.lib;gtest_maind.lib;Winmm.lib;enet64.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;Irrlicht.lib;libssl.lib;libcrypto.lib;Ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <LinkTimeCodeGeneration>UseFastLinkTimeCodeGeneration</LinkTimeCodeGeneration>
     </Link>
