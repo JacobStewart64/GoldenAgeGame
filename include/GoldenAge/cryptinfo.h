@@ -78,19 +78,23 @@ namespace ga {
 			debug("encrypting string ", encrypt_in);
 			int len;
 			int ciphertextlen;
-			unsigned char encrypt_in_buf[48];
+			unsigned char* encrypt_in_buf = new unsigned char[encrypt_in.size() + (AES_BLOCK_SIZE - encrypt_in.size() % AES_BLOCK_SIZE)];
 			debug("writing encrypted bytes to ciphertext");
 			if (1 != EVP_EncryptUpdate(ectx, encrypt_in_buf, &len, (const unsigned char*)encrypt_in.c_str(), encrypt_in.size())) handleErrors();
 			ciphertextlen = len;
 			debug("writing final bytes to ciphertext");
 			if (1 != EVP_EncryptFinal_ex(ectx, encrypt_in_buf + ciphertextlen, &len)) handleErrors();
 			ciphertextlen += len;
-			encrypt_in_buf[ciphertextlen] = '\0';
 			debug("free ctx obj");
 			EVP_CIPHER_CTX_free(ectx);
-			encrypt_out = (const char*)encrypt_in_buf;
+			for (int i = 0; i < ciphertextlen; ++i)
+			{
+				encrypt_out.push_back(encrypt_in_buf[i]);
+			}
+			debug("free encrypt_in_buf");
 			debug("encrypted string ", encrypt_out);
 			debug("encrypt good");
+			delete[] encrypt_in_buf;
 			return ciphertextlen;
 		}
 
@@ -99,7 +103,7 @@ namespace ga {
 			debug("decrypt called");
 			filldctx();
 			debug("decrypting string ", ciphertext);
-			unsigned char buf[48];
+			unsigned char* buf = new unsigned char[ciphertext.size()];
 			debug("writing unencrypted bytes to plaintext");
 			int len;
 			if (!EVP_DecryptUpdate(dctx, buf, &len, (const unsigned char*)ciphertext.c_str(), ciphertext.size())) handleErrors();
@@ -107,11 +111,15 @@ namespace ga {
 			int oldlen = len;
 			int ret = EVP_DecryptFinal_ex(dctx, buf + oldlen, &len);
 			oldlen += len;
-			buf[oldlen] = '\0';
 			debug("freeing ctx obj");
 			EVP_CIPHER_CTX_free(dctx);
-			plainstr = (const char*)buf;
+			for (int i = 0; i < oldlen; ++i)
+			{
+				plainstr.push_back(buf[i]);
+			}
 			debug("the decrypted string ", plainstr);
+			debug("freeing ciphertext buf");
+			delete[] buf;
 			if (ret == 1)
 			{
 				debug("decryption good");

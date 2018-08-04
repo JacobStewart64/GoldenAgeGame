@@ -143,7 +143,7 @@ namespace ga {
 						if (ret != -1)
 							client_toons[ret].node->setVisible(false);
 						ct.setup_graphics("./system/resources/3dart/human_male.blend.ms3d");
-						client_toons.push_back(std::move(ct));
+						client_toons.push_back(ct);
 					}
 					else if (id == 4)
 					{
