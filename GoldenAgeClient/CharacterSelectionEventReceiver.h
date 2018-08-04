@@ -25,6 +25,7 @@ namespace ga {
 		irr::gui::IGUIButton* submit_character_button;
 		irr::gui::IGUIButton* cancel_creation_button;
 		irr::gui::IGUIEditBox* create_toon_name;
+		irr::video::ITexture* bg;
 
 		std::vector<toon>* toons;
 
@@ -200,6 +201,11 @@ namespace ga {
 				}
 			}
 			return false;
+		}
+
+		irr::video::ITexture* getBG()
+		{
+			return bg;
 		}
 	};
 }

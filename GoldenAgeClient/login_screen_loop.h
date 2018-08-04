@@ -10,7 +10,7 @@ extern irr::IrrlichtDevice* device;
 extern irr::video::IVideoDriver* driver;
 
 namespace ga {
-	void loginScreenLoop(irr::video::ITexture* bg, unsigned int& runloop, CharacterSelectEventReceiver& rec)
+	void loginScreenLoop(unsigned int& runloop, CharacterSelectEventReceiver& rec)
 	{
 		debug("initializing data for login screen loop");
 		irr::video::ITexture* title = driver->getTexture("./system/resources/textures/GoldenAgeTitle.png");
@@ -26,7 +26,7 @@ namespace ga {
 		{
 			driver->beginScene(true, true, irr::video::SColor(0, 120, 102, 136));
 
-			driver->draw2DImage(bg, irr::core::position2d<irr::s32>(0, 0),
+			driver->draw2DImage(receiver.getBG(), irr::core::position2d<irr::s32>(0, 0),
 				irr::core::rect<irr::s32>(0, 0, 800, 900), 0,
 				irr::video::SColor(255, 255, 255, 255), false);
 
