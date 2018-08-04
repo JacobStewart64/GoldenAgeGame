@@ -171,15 +171,7 @@ namespace ga {
 			std::string email_string = wcstrtostdstr16(email->getText());
 			std::string password_string = wcstrtostdstr16(password->getText());
 			std::string selected_server; getGameServerStringFromSelected(selected_server);
-			ga::array_packet packet(
-				ga::array_packet::get_args_size(
-					email_string,
-					password_string,
-					selected_server
-				));
-			packet.fill(email_string, password_string, selected_server);
-			debug("the packet: ", packet.get(), "\n", packet.get(), "\n", packet.get());
-			res = client->Post(location, packet(), "text/plain");
+			res = client->Post(location, email_string + " " + password_string + " " + selected_server + " ", "text/plain");
 			selected_account = email_string;
 		}
 
@@ -198,12 +190,21 @@ namespace ga {
 				debug("login success");
 				statusmsg->setText(L"Login Success!");
 				resetStatusMessageTimeout();
-				ga::array_packet packet;
-				packet.from_buf(res->body.c_str(), res->body.size());
-				std::string type = packet.get();
-				std::string key = packet.get();
-				std::string iv = packet.get();
-				std::string skstr = packet.get();
+				unsigned int index = res->body.find_first_of(' ');
+				unsigned int last = 0;
+				std::string type = res->body.substr(last, index - last);
+				++index;
+				last = index;
+				index = res->body.find_first_of(' ', index);
+				std::string key = res->body.substr(last, index - last);
+				++index;
+				last = index;
+				index = res->body.find_first_of(' ', index);
+				std::string iv = res->body.substr(last, index - last);
+				++index;
+				last = index;
+				index = res->body.find_first_of(' ', index);
+				std::string skstr = res->body.substr(last, index - last);
 				ci.keyFromString(key);
 				ci.ivFromString(iv);
 				sk.from_string(skstr);

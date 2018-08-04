@@ -137,7 +137,7 @@ namespace ga {
 						//it will be erased! We don't have the name yet so use a dummy empty string name. Fill in the name on submit. Add client toons at back name to listbox.
 						ga::toon toon(true);
 						toons->push_back(toon);
-						client_toon ct(std::move(toon));
+						client_toon ct(toon);
 						int ret = toon_select_box->getSelected();
 						if (ret != -1)
 							client_toons[ret].node->setVisible(false);

@@ -1,26 +1,17 @@
 #pragma once
 #include <vector>
+#include <GoldenAge/Debug.h>
 
 
 namespace ga {
+	//for dev only: highly not efficient
 	//hoping this makes creating new kinds of packets easy
 	//variadic template buffer building from strings
-	//overloaded dereference that returns vector<unsigned char> as char*
 	//use the same pattern of arguments on both sides of communication
 	//and the out_strings should all mirror the in strings.
 	class array_packet {
 		std::vector<unsigned char> packet;
 		unsigned int index = 0;
-
-		void zip_string(std::string str)
-		{
-			debug("packet add: ", str);
-			packet.push_back(str.size());
-			for (char c : str)
-			{
-				packet.push_back(c);
-			}
-		}
 
 	public:
 		//pass the size of all the args using the static helper
@@ -50,14 +41,20 @@ namespace ga {
 		template<typename ...T>
 		void fill(T ...args)
 		{
-			((void)zip_string(std::forward<T>(args)), ...);
+			((void)add(std::forward<T>(args)), ...);
 		}
 
 		std::string get()
 		{
 			std::string newstr;
-			unsigned int length = index + packet[index] + 1;
-			++index;
+			unsigned int length;
+			unsigned char* lref = (unsigned char*)&length;
+			unsigned int offset = (unsigned int)lref + 4;
+			for (; (unsigned int)lref < offset; ++lref, ++index)
+			{
+				*lref = packet[index];
+			}
+			length += index;
 			for (; index < length; ++index)
 			{
 				newstr.push_back(packet[index]);
@@ -69,11 +66,19 @@ namespace ga {
 		void add(std::string str)
 		{
 			debug("adding string: ", str);
-			packet.push_back(str.size());
+			unsigned int length = str.size();
+			unsigned char* lref = (unsigned char*)&length;
+			unsigned int offset = (unsigned int)lref + 4;
+			for (; (unsigned int)lref < offset; ++lref)
+			{
+				packet.push_back(*lref);
+			}
 			for (char c : str)
 			{
 				packet.push_back(c);
 			}
+
+			debug((char*)&packet[0]);
 		}
 
 		//helper to get the needed conversion to size of args + their null chars
@@ -82,7 +87,7 @@ namespace ga {
 		static unsigned int get_args_size(T ...args)
 		{
 			int size = 0;
-			((void)((size += args.size() + 1)), ...);
+			((void)((size += args.size() + 4)), ...);
 			return size;
 		}
 

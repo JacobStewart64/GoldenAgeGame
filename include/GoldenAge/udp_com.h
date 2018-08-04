@@ -158,6 +158,8 @@ namespace ga {
 			ENetPacket* pack = enet_packet_create(packet, size, ENETPACKETFLAG);
 			debug("the packet we are sending\n", pack->data);
 			enet_peer_send(peer, 0, pack);
+			debug("flushing host! (packet sent - prob don't rely on this happening)");
+			enet_host_flush(host);
 		}
 
 		void register_receive(efunc handler_receive)

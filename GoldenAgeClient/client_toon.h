@@ -10,7 +10,7 @@ struct client_toon {
 	ga::toon t;
 	irr::scene::IAnimatedMeshSceneNode* node;
 
-	client_toon(ga::toon&& t) : t(t), node(0) {}
+	client_toon(ga::toon& t) : t(t), node(0) {}
 
 	void init_position()
 	{
