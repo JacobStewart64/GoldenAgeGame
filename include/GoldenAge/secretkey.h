@@ -24,6 +24,7 @@ namespace ga {
 			{
 				newstr.push_back(buffer[i]);
 			}
+			debug("newstr size: ", newstr.size());
 			return newstr;
 		}
 
