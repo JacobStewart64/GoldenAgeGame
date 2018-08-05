@@ -29,7 +29,7 @@ namespace ga {
 		std::vector<ga::sleeper*> sleepers; //dynamically allocated because of copy constructor issues (new + delete)
 		CharacterSelectEventReceiver* rec;
 		std::string selected_account;
-		irr::video::ITexture* bg = driver->getTexture("./system/resources/textures/kewlbg.png");
+		irr::video::ITexture* bg = driver->getTexture("./system/resources/textures/kewlbg.jpg");
 		unsigned int* runloop;
 
 	public:
