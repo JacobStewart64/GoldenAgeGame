@@ -1,22 +1,48 @@
 #pragma once
 #include <string>
 #include <iostream>
+#include <functional>
+
+void logFileAndLine(char* file, int line)
+{
+	unsigned int index = strlen(file);
+	for (int i = index - 1; i >= 0; --i)
+	{
+		if (file[i] == '\\')
+		{
+			index = i;
+			break;
+		}
+	}
+	file[index] = '/';
+	for (int i = index - 1; i >= 0; --i)
+	{
+		if (file[i] == '\\')
+		{
+			index = i;
+			break;
+		}
+	}
+	file[index] = '/';
+	std::cout << &file[index] << ":" << line << " ";
+}
+
+void DEBUG(std::function<void()> cb)
+{
+	#ifdef _DEBUG
+		cb();
+	#endif
+}
+
+#define DEBUG(x)   DEBUG((x))
 
 //if debug isn't defined, turns into a no-op
 template <typename ...T>
-void debug(std::string file, int line, T&& ...args)
+void debug(const char* file, int line, T&& ...arg_pack)
 {
 	#ifdef _DEBUG
-		unsigned int index = file.find_last_of('\\');
-		file[index] = '/';
-		index = file.find_last_of('\\', --index);
-		std::string finalfile = file.substr(index);
-		finalfile[0] = '/';
-		std::cout << finalfile << ":" << line << " ";
-		using expander = int[];
-		(void)expander {
-			0, (void(std::cout << std::forward<T>(args)), 0)...
-		};
+		logFileAndLine(file, line);
+		((std::cout << std::forward<T>(arg_pack)), ...);
 		std::cout << std::endl;
 	#endif
 }

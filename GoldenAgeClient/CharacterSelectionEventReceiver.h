@@ -1,5 +1,7 @@
 #pragma once
 #include "client_toon.h"
+#include "TOPLEVELFLOW.h"
+#include "Validator.h"
 #include <GoldenAge/debug.h>
 #include <GoldenAge/toon.h>
 #include <GoldenAge/udp_com.h>
@@ -7,16 +9,9 @@
 #include <GoldenAge/wcstrtostdstr.h>
 #include <unordered_map>
 
-extern irr::gui::IGUIEnvironment* env;
-extern irr::video::ITexture* bg;
-extern irr::video::IVideoDriver* driver;
-extern irr::scene::ISceneManager* smgr;
-extern unsigned int runloop;
-extern ga::udp_com com;
-extern std::vector<client_toon> client_toons;
 
 namespace ga {
-	class CharacterSelectEventReceiver : public irr::IEventReceiver
+	class CharacterSelectEventReceiver : public irr::IEventReceiver, private Validator
 	{
 		irr::gui::IGUIListBox* toon_select_box;
 		irr::gui::IGUIButton* toon_select_button;
@@ -26,52 +21,45 @@ namespace ga {
 		irr::gui::IGUIButton* cancel_creation_button;
 		irr::gui::IGUIEditBox* create_toon_name;
 		irr::video::ITexture* bg;
+		LOOP_PARAM_PACK& LOOP_PACK;
 
-		std::vector<toon>* toons;
-
-	public:
-		CharacterSelectEventReceiver() {}
-
-		void setup()
+		void init_toon_select_box()
 		{
-			bg = driver->getTexture("./system/resources/textures/CharacterSelectBG.png");
-			toon_select_box = env->addListBox(irr::core::rect<irr::s32>(450, 50, 750, 750), 0, 1, true);
-			toon_select_button = env->addButton(irr::core::rect<irr::s32>(310, 700, 410, 750), 0, 1, L"Login", L"Login");
-			options_button = env->addButton(irr::core::rect<irr::s32>(185, 700, 285, 750), 0, 2, L"Options", L"Options");
-			create_character_button = env->addButton(irr::core::rect<irr::s32>(320, 5, 400, 45), 0, 3, L"Create Character", L"Create Character");
-			submit_character_button = env->addButton(irr::core::rect<irr::s32>(310, 745, 410, 795), 0, 4, L"Create Character", L"Create Character");
-			submit_character_button->setVisible(false);
-			cancel_creation_button = env->addButton(irr::core::rect<irr::s32>(185, 745, 285, 795), 0, 5, L"Cancel", L"Cancel");
-			cancel_creation_button->setVisible(false);
-			create_toon_name = env->addEditBox(L"", irr::core::rect<irr::s32>(185, 700, 285, 740), true, 0, 1);
-			create_toon_name->setVisible(false);
-		}
-
-		void init_toon_select_box(std::vector<toon>& toons)
-		{
-			//I have all the toon graphics, which represent the character's equipment models.
-			//the character will be represented by something else I guess. There's a lot of little
-			//id that I have to make to represent everything for the gameserver and client.
-			this->toons = &toons;
-			bool firsttime = true;
-			for (toon& t : toons)
+			wchar_t buf[LOGINBUFFERMAX];
+			if (LOOP_PACK.mytoons.size() > 0)
 			{
-				wchar_t buf[LOGINBUFFERMAX];
-				mbstowcs(buf, t.name.c_str(), t.name.size());
-				unsigned int i = toon_select_box->addItem(buf);
-				if (firsttime)
-				{
-					toon_select_box->setSelected(buf);
-					firsttime = false;
-				}
+				mbstowcs(buf, LOOP_PACK.mytoons[0].name.c_str(), LOOP_PACK.mytoons[0].name.size());
+				toon_select_box->addItem(buf);
+				toon_select_box->setSelected(buf);
+			}
+			for (int i = 1; i < LOOP_PACK.mytoons.size(); ++i)
+			{
+				mbstowcs(buf, LOOP_PACK.mytoons[i].name.c_str(), LOOP_PACK.mytoons[i].name.size());
+				toon_select_box->addItem(buf);
 			}
 		}
 
-		void finishCreateToon()
+	public:
+		CharacterSelectEventReceiver(LOOP_PARAM_PACK& LOOP_PACK) : LOOP_PACK(LOOP_PACK)
 		{
-			toons->back().name = wcstrtostdstr16(create_toon_name->getText());
+			bg = LOOP_PACK.driver->getTexture("./system/resources/textures/CharacterSelectBG.png");
+			toon_select_box = LOOP_PACK.env->addListBox(irr::core::rect<irr::s32>(450, 50, 750, 750), 0, 1, true);
+			toon_select_button = LOOP_PACK.env->addButton(irr::core::rect<irr::s32>(310, 700, 410, 750), 0, 1, L"Login", L"Login");
+			options_button = LOOP_PACK.env->addButton(irr::core::rect<irr::s32>(185, 700, 285, 750), 0, 2, L"Options", L"Options");
+			create_character_button = LOOP_PACK.env->addButton(irr::core::rect<irr::s32>(320, 5, 400, 45), 0, 3, L"Create Character", L"Create Character");
+			submit_character_button = LOOP_PACK.env->addButton(irr::core::rect<irr::s32>(310, 745, 410, 795), 0, 4, L"Create Character", L"Create Character");
+			submit_character_button->setVisible(false);
+			cancel_creation_button = LOOP_PACK.env->addButton(irr::core::rect<irr::s32>(185, 745, 285, 795), 0, 5, L"Cancel", L"Cancel");
+			cancel_creation_button->setVisible(false);
+			create_toon_name = LOOP_PACK.env->addEditBox(L"", irr::core::rect<irr::s32>(185, 700, 285, 740), true, 0, 1);
+			create_toon_name->setVisible(false);
+		}
+
+		void finishCreateToon(std::string& name)
+		{
+			LOOP_PACK.mytoons.back().name = name;
 			toon_select_box->clear();
-			init_toon_select_box(*toons);
+			init_toon_select_box();
 
 			submit_character_button->setVisible(false);
 			cancel_creation_button->setVisible(false);
@@ -85,7 +73,7 @@ namespace ga {
 
 		toon* getSelectedToon()
 		{
-			return &(*toons)[toon_select_box->getSelected()];
+			return &LOOP_PACK.mytoons[toon_select_box->getSelected()];
 		}
 
 		void openOptions()
@@ -111,7 +99,10 @@ namespace ga {
 						std::string selected(std::to_string(toon_select_box->getSelected()));
 						ga::array_packet pack(ga::array_packet::get_args_size(ptype, selected));
 						pack.fill(ptype, selected);
-						com.send(com.getPeer(), pack(), pack.size(), ENET_PACKET_FLAG_RELIABLE);
+						LOOP_PACK.com.send(LOOP_PACK.com.getPeer(), pack(), pack.size(), ENET_PACKET_FLAG_RELIABLE);
+						LOOP_PACK.GameReceiver = new ga::GameEventReceiver(LOOP_PACK);
+						device->setEventReceiver(LOOP_PACK.GameReceiver);
+						LOOP_PACK.runloop = false;
 					}
 					else if (id == 2)
 					{
@@ -120,10 +111,6 @@ namespace ga {
 					}
 					else if (id == 3)
 					{
-						//create character!
-						//create a toon and display him and a box to write the name in
-						//later make him configurable
-						//tell the server we have made a toon with [name] when hit create button (show over login button) (show cancel over options)
 						//1st - turn off all the non-create-toon gui stuff
 						toon_select_box->setVisible(false);
 						toon_select_button->setVisible(false);
@@ -137,13 +124,13 @@ namespace ga {
 						//client toons is still in its state where the first client toon does not represent the player
 						//it will be erased! We don't have the name yet so use a dummy empty string name. Fill in the name on submit. Add client toons at back name to listbox.
 						ga::toon toon(true);
-						toons->push_back(toon);
+						LOOP_PACK.mytoons.push_back(toon);
 						client_toon ct(toon);
 						int ret = toon_select_box->getSelected();
 						if (ret != -1)
-							client_toons[ret].node->setVisible(false);
+							LOOP_PACK.client_toons[ret].node->setVisible(false);
 						ct.setup_graphics("./system/resources/3dart/human_male.blend.ms3d");
-						client_toons.push_back(ct);
+						LOOP_PACK.client_toons.push_back(ct);
 					}
 					else if (id == 4)
 					{
@@ -151,16 +138,17 @@ namespace ga {
 						//for now this is a g packet send and do simple gui things
 						std::string type("g");
 						std::string name = wcstrtostdstr16(create_toon_name->getText());
+						finishCreateToon(name);
 						ga::array_packet packet(ga::array_packet::get_args_size(type, name));
 						packet.fill(type, name);
-						com.send(com.getPeer(), packet(), packet.size(), ENET_PACKET_FLAG_RELIABLE);
+						LOOP_PACK.com.send(LOOP_PACK.com.getPeer(), packet(), packet.size(), ENET_PACKET_FLAG_RELIABLE);
 						//sent packet "create toon" with name info!
 					}
 					else if (id == 5)
 					{
 						//cancel toon create
-						client_toons.pop_back();
-						toons->pop_back();
+						LOOP_PACK.client_toons.pop_back();
+						LOOP_PACK.mytoons.pop_back();
 
 						submit_character_button->setVisible(false);
 						cancel_creation_button->setVisible(false);
@@ -182,16 +170,7 @@ namespace ga {
 					if (id == 1)
 					{
 						debug("checking if toon name string is too long");
-						unsigned int lenemail = lstrlenW(create_toon_name->getText());
-						if (lenemail == 17)
-						{
-							debug("toon name string too long");
-							wchar_t textminusone[17];
-							std::memcpy(textminusone, create_toon_name->getText(), sizeof(textminusone) - 2);
-							textminusone[16] = L'\0';
-							create_toon_name->setText(textminusone);
-							debug("toon name string set back a letter");
-						}
+						validateInput(create_toon_name);
 						debug("toon name string good");
 					}
 					else

@@ -152,14 +152,15 @@ namespace ga {
 			}
 		}
 
-		void send(ENetPeer* peer, const char* packet, unsigned int size, enum _ENetPacketFlag ENETPACKETFLAG)
+		void send(ENetPeer* peer, void* packet, unsigned int size, enum _ENetPacketFlag ENETPACKETFLAG)
 		{
 			debug("sending packet");
 			ENetPacket* pack = enet_packet_create(packet, size, ENETPACKETFLAG);
-			debug("the packet we are sending\n", pack->data);
 			enet_peer_send(peer, 0, pack);
-			debug("flushing host! (packet sent - prob don't rely on this happening)");
+			debug("flushing host! (packet sent - prob don't do this in production like this,\
+				makes it simpler to immediately send the queued packet)");
 			enet_host_flush(host);
+			debug("flush executed!");
 		}
 
 		void register_receive(efunc handler_receive)
@@ -192,26 +193,26 @@ namespace ga {
 			this->handler_delta = handler_delta;
 		}
 
-		void listenLoop(unsigned int& runloop, unsigned int last_time)
+		void listenLoop(bool& runloop, unsigned int last_time)
 		{
 			warnMessageHandlers();
 			debug("entering udp listen loop");
 			while (runloop > 0)
 			{
 				ENetEvent e;
-
 				while (enet_host_service(host, &e, 0) > 0)
 				{
 					switch (e.type)
 					{
 					case _ENetEventType::ENET_EVENT_TYPE_CONNECT:
 						debug("A new client connected from ", e.peer->address.host, ":", e.peer->address.port);
-						debug("handling connect");
 						handler_connect(e.peer);
 						break;
 					case _ENetEventType::ENET_EVENT_TYPE_RECEIVE:
-						debug("A packet of length ", e.packet->dataLength, " containing ", e.packet->data, " was received from ", e.peer->data, " on channel ", e.peer->data, ".\n");
-						debug("handling packet");
+						debug("A packet of length ", e.packet->dataLength,
+							" containing ",	e.packet->data,
+							" was received from ", e.peer->data,
+							" on channel ", e.peer->data, ".\n");
 						handler_receive(e);
 						debug("packet handled destroying packet");
 						enet_packet_destroy(e.packet);

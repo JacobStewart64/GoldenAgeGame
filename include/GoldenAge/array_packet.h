@@ -7,8 +7,10 @@ namespace ga {
 	//for dev only: highly not efficient
 	//hoping this makes creating new kinds of packets easy
 	//variadic template buffer building from strings
-	//use the same pattern of arguments on both sides of communication
-	//and the out_strings should all mirror the in strings.
+	//use the same pattern of arguments on both sides of the network
+	//in == out.
+	//designed to handle null chars and other anomalies.
+	//thinking about memcpy c-string by hand in production? idk
 	class array_packet {
 		std::vector<unsigned char> packet;
 		unsigned int index = 0;
@@ -20,28 +22,28 @@ namespace ga {
 
 		array_packet(unsigned int args_size)
 		{
-			debug("reserving ", args_size, " bytes");
+			debug("reserving ", args_size, " bytes for array packet.");
 			packet.reserve(args_size);
 		}
 
 		void from_buf(const char* buf, unsigned int size)
 		{
-			debug("reserving ", size, " bytes");
+			debug("reserving ", size, " bytes for array packet");
 			packet.reserve(size);
 			for (unsigned int i = 0; i < size; ++i)
 			{
 				packet.push_back(buf[i]);
 			}
-			debug("packet after from buffer: ", (const char*)&packet[0]);
 		}
 
 		//fill the packet with your string args, you can easily
 		//retrieve them from the packet by calling get with the
 		//same arguments where you receive this packet
 		template<typename ...T>
-		void fill(T ...args)
+		void fill(T ...arg_pack)
 		{
-			((void)add(std::forward<T>(args)), ...);
+			debug("adding args to array packet");
+			((debug(arg_pack), add(std::forward<T>(arg_pack))), ...);
 		}
 
 		std::string get()
@@ -63,6 +65,18 @@ namespace ga {
 			return newstr;
 		}
 
+		unsigned int getInt()
+		{
+			unsigned int length;
+			unsigned char* lref = (unsigned char*)&length;
+			unsigned int offset = (unsigned int)lref + 4;
+			for (; (unsigned int)lref < offset; ++lref, ++index)
+			{
+				*lref = packet[index];
+			}
+			return length;
+		}
+
 		void add(std::string str)
 		{
 			debug("adding string: ", str);
@@ -77,8 +91,6 @@ namespace ga {
 			{
 				packet.push_back(c);
 			}
-
-			debug((char*)&packet[0]);
 		}
 
 		//helper to get the needed conversion to size of args + their null chars
@@ -86,19 +98,23 @@ namespace ga {
 		template<typename ...T>
 		static unsigned int get_args_size(T ...args)
 		{
+			debug("getting args size for array packet");
 			int size = 0;
-			((void)((size += args.size() + 4)), ...);
+			((debug(size), size += args.size() + 4), ...);
+			debug(size);
 			return size;
 		}
 
 		//give packet buffer pointer
-		const char* operator()()
+		void* operator()()
 		{
-			return (const char*)&packet[0];
+			debug("getting packet:\n", std::string((char*)&packet[0], 0, packet.size()));
+			return &packet[0];
 		}
 
 		unsigned int size()
 		{
+			debug("returning packet size: ", packet.size());
 			return packet.size();
 		}
 	};

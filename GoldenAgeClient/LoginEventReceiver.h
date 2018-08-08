@@ -2,48 +2,54 @@
 #include "stdafx.h"
 #include "Sleeper.h"
 #include "CharacterSelectionEventReceiver.h"
+#include "Validator.h"
 #include <GoldenAge/debug.h>
 #include <GoldenAge/cryptinfo.h>
 #include <GoldenAge/array_packet.h>
 #include <GoldenAge/wcstrtostdstr.h>
 #include <GoldenAge/secretkey.h>
+#include <functional>
 
-extern irr::gui::IGUIEnvironment* env;
-extern irr::IrrlichtDevice* device;
-extern ga::cryptinfo ci;
-extern ga::secretkey sk;
-extern ga::udp_com com;
 
 namespace ga {
-	class LoginEventReceiver : public irr::IEventReceiver
+	class LoginEventReceiver : public irr::IEventReceiver, private Validator
 	{
-		irr::gui::IGUIStaticText* statusmsg = env->addStaticText(L"Hello!", irr::core::rect<irr::s32>(150, 290, 650, 320), false, false, 0, -1, false);
-		irr::gui::IGUIListBox* gameserver = env->addListBox(irr::core::rect<irr::s32>(300, 210, 500, 290), 0, 1);
-		irr::gui::IGUIEditBox* email = env->addEditBox(L"", irr::core::rect<irr::s32>(300, 320, 500, 390), true, 0, 1);
-		irr::gui::IGUIEditBox* password = env->addEditBox(L"", irr::core::rect<irr::s32>(300, 410, 500, 480), true, 0, 2);
-		irr::gui::IGUIButton* login = env->addButton(irr::core::rect<irr::s32>(350, 500, 450, 530), 0, 1, L"Login", L"Login");
-		irr::gui::IGUIButton* createaccount = env->addButton(irr::core::rect<irr::s32>(350, 540, 450, 570), 0, 2, L"Make Account", L"Make Account");
-		std::unordered_map<irr::u32, std::string> gsitemmap;
+		irr::gui::IGUIStaticText* statusmsg = LOOP_PACK.env->addStaticText(L"Hello!", irr::core::rect<irr::s32>(150, 290, 650, 320), false, false, 0, -1, false);
+		irr::gui::IGUIListBox* gameserver = LOOP_PACK.env->addListBox(irr::core::rect<irr::s32>(300, 210, 500, 290), 0, 1);
+		irr::gui::IGUIEditBox* email = LOOP_PACK.env->addEditBox(L"", irr::core::rect<irr::s32>(300, 320, 500, 390), true, 0, 1);
+		irr::gui::IGUIEditBox* password = LOOP_PACK.env->addEditBox(L"", irr::core::rect<irr::s32>(300, 410, 500, 480), true, 0, 2);
+		irr::gui::IGUIButton* login = LOOP_PACK.env->addButton(irr::core::rect<irr::s32>(350, 500, 450, 530), 0, 1, L"Login", L"Login");
+		irr::gui::IGUIButton* createaccount = LOOP_PACK.env->addButton(irr::core::rect<irr::s32>(350, 540, 450, 570), 0, 2, L"Make Account", L"Make Account");
+		std::unordered_map<unsigned int, std::string> id_to_game_server_name_map;
 		httplib::SSLClient* client;
 		std::vector<std::thread> threads;
-		std::vector<ga::sleeper*> sleepers; //dynamically allocated because of copy constructor issues (new + delete)
-		CharacterSelectEventReceiver* rec;
-		std::string selected_account;
-		irr::video::ITexture* bg = driver->getTexture("./system/resources/textures/kewlbg.jpg");
-		unsigned int* runloop;
+		std::vector<ga::sleeper*> sleepers;
+		irr::video::ITexture* bg = LOOP_PACK.driver->getTexture("./system/resources/textures/kewlbg.jpg");
+		LOOP_PARAM_PACK& LOOP_PACK;
+
+		void onRequestSuccess(std::shared_ptr<httplib::Response>& res,
+			std::function<void(std::shared_ptr<httplib::Response>& res)> handle_success)
+		{
+			debug("response body: ", res->body);
+			if (res->body[0] == '\0')
+			{
+				debug("request failure");
+				resetStatusMessageTimeout(L"Request failure!");
+			}
+			else
+			{
+				handle_success(res);
+			}
+		}
 
 	public:
-		LoginEventReceiver(httplib::SSLClient& client, unsigned int* runloop, CharacterSelectEventReceiver& rec)
+		LoginEventReceiver(LOOP_PARAM_PACK& LOOP_PACK) : LOOP_PACK(LOOP_PACK)
 		{
 			debug("constructing LoginEventReceiver");
-			this->client = &client;
 			debug("setting alignment of statusmsg, email, and password");
 			statusmsg->setTextAlignment(irr::gui::EGUI_ALIGNMENT::EGUIA_CENTER, irr::gui::EGUI_ALIGNMENT::EGUIA_CENTER);
 			email->setTextAlignment(irr::gui::EGUI_ALIGNMENT::EGUIA_CENTER, irr::gui::EGUI_ALIGNMENT::EGUIA_CENTER);
 			password->setTextAlignment(irr::gui::EGUI_ALIGNMENT::EGUIA_CENTER, irr::gui::EGUI_ALIGNMENT::EGUIA_CENTER);
-			debug("setting alignment good");
-			this->rec = &rec;
-			this->runloop = runloop;
 			debug("constructing LoginEventReceiver good");
 		}
 
@@ -51,47 +57,21 @@ namespace ga {
 		{
 			if (event.EventType == irr::EET_GUI_EVENT)
 			{
-				debug("got a gui event");
-				debug("getting id of gui element");
 				irr::s32 id = event.GUIEvent.Caller->getID();
-				debug("gui element id: ", id);
-				debug("checking type of gui event");
 				if (event.GUIEvent.EventType == irr::gui::EGET_EDITBOX_CHANGED)
 				{
 					debug("irr::gui::EGET_EDITBOX_CHANGED");
 					if (id == 1)
 					{
-						debug("checking if email string is too long");
-						unsigned int lenemail = lstrlenW(email->getText());
-						if (lenemail == 17)
-						{
-							debug("email string too long");
-							wchar_t textminusone[17];
-							std::memcpy(textminusone, email->getText(), sizeof(textminusone) - 2);
-							textminusone[16] = L'\0';
-							email->setText(textminusone);
-							debug("email string set back a letter");
-						}
-						debug("email string good");
+						validateInput(email);
 					}
 					else if (id == 2)
 					{
-						debug("checking if password string is too long");
-						unsigned int lenpass = lstrlenW(password->getText());
-						if (lenpass == 17)
-						{
-							debug("password string too long");
-							wchar_t textminusone[17];
-							std::memcpy(textminusone, password->getText(), sizeof(textminusone) - 2);
-							textminusone[16] = L'\0';
-							password->setText(textminusone);
-							debug("password string set back a letter");
-						}
-						debug("password string good");
+						validateInput(password);
 					}
 					else
 					{
-						debug("did you forget to add to the event receiver?");
+						debug("Unknown GUI element event");
 					}
 				}
 				else if (event.GUIEvent.EventType == irr::gui::EGET_BUTTON_CLICKED)
@@ -115,14 +95,24 @@ namespace ga {
 			return false;
 		}
 
-		void getGameServerStringFromSelected(std::string& str)
+		std::string getGameServerNameFromSelected()
 		{
 			debug("getting id of selected game server");
-			irr::u32 id = gameserver->getSelected();
+			unsigned int id = gameserver->getSelected();
 			debug("id: ", id);
 			debug("looking in game server map with id");
-			str = gsitemmap.at(id);
-			debug("found string: ", str);
+			if (id_to_game_server_name_map.find(id) != id_to_game_server_name_map.end())
+			{
+				std::string selected_game_server_name = id_to_game_server_name_map.at(id);
+				debug("found string: ", selected_game_server_name);
+				return selected_game_server_name;
+			}
+			debug("bad game server id, no game server name at id");
+			debug("what are you doing? Exiting...");
+			DEBUG([]() {
+				system("pause");
+			});
+			exit(EXIT_FAILURE);
 		}
 
 		void setupGameServerMenu()
@@ -130,34 +120,28 @@ namespace ga {
 			debug("setting up game server menu");
 			debug("opening file ", GAMESERVERINILOCATION);
 			std::ifstream gameserverini(GAMESERVERINILOCATION);
-			bool firsttime = true;
+			debug("adding first game server name to list");
+			std::string line; getline(gameserverini, line);
+			wchar_t buf[LOGINBUFFERMAX];
+			mbstowcs(buf, line.c_str(), line.size());
+			unsigned int id = gameserver->addItem(buf);
+			debug("entry id ", id);
+			debug("insert ", line, " at ", id, "in the gserver_id to game server name map");
+			id_to_game_server_name_map.insert(std::make_pair(id, line));
+			debug("insert good");
+			debug("set the first item selected");
+			gameserver->setSelected(buf);
+			debug("set first item selected good");
 			for (std::string line; getline(gameserverini, line);)
 			{
 				debug("making entry in map for ", line);
 				wchar_t buf[LOGINBUFFERMAX];
 				mbstowcs(buf, line.c_str(), line.size());
-				if (firsttime)
-				{
-					debug("getting entry id");
-					irr::u32 id = gameserver->addItem(buf);
-					debug("entry id ", id);
-					debug("insert ", line, " at ", id);
-					gsitemmap.insert(make_pair(id, line));
-					debug("insert good");
-					debug("set the first item selected");
-					gameserver->setSelected(buf);
-					debug("set first item selected good");
-					firsttime = false;
-				}
-				else
-				{
-					debug("getting entry id");
-					irr::u32 id = gameserver->addItem(buf);
-					debug("entry id ", id);
-					debug("insert ", line, " at ", id);
-					gsitemmap.insert(make_pair(id, line));
-					debug("insert good");
-				}
+				irr::u32 id = gameserver->addItem(buf);
+				debug("entry id ", id);
+				debug("insert ", line, " at ", id, "in the gserver_id to game server name map");
+				id_to_game_server_name_map.insert(make_pair(id, line));
+				debug("insert good");
 				debug("make entry good");
 			}
 			debug("close file ", GAMESERVERINILOCATION);
@@ -165,89 +149,88 @@ namespace ga {
 			debug("game server menu setup good");
 		}
 
-		void makeLoginPost(const char* location, std::shared_ptr<httplib::Response>& res)
+		template<typename ...T, unsigned int post_max_buf_len = LOGINBUFFERMAX>
+		void makePost(const char* location,
+			std::function<void(std::shared_ptr<httplib::Response>& res)> response_handler,
+			T&& ...args_pack) //a bunch of strings to be concatenated
 		{
 			debug("login post at ", location);
-			//fill the packet args
-			std::string email_string = wcstrtostdstr16(email->getText());
-			std::string password_string = wcstrtostdstr16(password->getText());
-			std::string selected_server; getGameServerStringFromSelected(selected_server);
-			res = client->Post(location, email_string + " " + password_string + " " + selected_server + " ", "text/plain");
-			selected_account = email_string;
+			std::string post_str = ((args_pack.size() >= post_max_buf_len ?
+				(debug("post str arg >= ", post_max_buf_len, ", FATALITY!!!"),
+					system("pause"), exit(EXIT_FAILURE)) : std::forward<T>(args_pack)) += ...)
+			debug("post data string: ", post_str);
+			std::shared_ptr<httplib::Response> res = client->Post(location, post_str, "text/plain");
+			debug("handling response");
+			response_handler(res);
 		}
 
 		void sendLoginPost()
 		{
-			std::shared_ptr<httplib::Response> res;
-			makeLoginPost("/login", res);
-			debug("response body: ", res->body.c_str());
-			if (res->body[0] == '\0')
-			{
-				debug("login failure");
-				statusmsg->setText(L"Login failure!");
-				resetStatusMessageTimeout();
-			}
-			else {
-				debug("login success");
-				statusmsg->setText(L"Login Success!");
-				resetStatusMessageTimeout();
-				debug(sk.to_string().size());
-				std::string type(res->body.substr(0, 1), 0, 1);
-				std::string key(res->body.substr(2, 32), 0, 32);
-				debug("key: ", key, "see space?");
-				debug("key size: ", key.size());
-				std::string iv(res->body.substr(35, 16), 0, 16);
-				debug("iv: ", iv, "see space?");
-				debug("iv size: ", iv.size());
-				std::string skstr(res->body.substr(52, 256), 0, 256);
-				debug("skstr: ", skstr, "see space?");
-				debug("skstr size: ", skstr.size());
-				debug("skstr: ", skstr, "see space?");
-				ci.keyFromString(key);
-				ci.ivFromString(iv);
-				sk.from_string(skstr);
-				debug("established session!");
-				debug("client ci for this session: ", ci);
-				debug("client secret key for this session: ", sk.to_string());
-				debug("connecting to the game server...");
-				device->setEventReceiver(rec);
-				*runloop = false;
-				jointhreads(); //this will be destructed. join any threads.
+			std::string email_str = wcstrtostdstr16(email->getText());
+			std::string password_str = wcstrtostdstr16(password->getText());
+			std::string game_server_name = getGameServerNameFromSelected();
+			makePost("/login",
+				[this, &email_str](std::shared_ptr<httplib::Response>& res) {
+				onRequestSuccess(res, [this, &email_str](std::shared_ptr<httplib::Response>& res) {
+					debug("request success");
+					this->resetStatusMessageTimeout(L"Request Success!");
+					std::string type(res->body.substr(0, 1), 0, 1);
+					debug("type: ", type);
+					std::string key(res->body.substr(2, 32), 0, 32);
+					debug("key: ", key);
+					std::string iv(res->body.substr(35, 16), 0, 16);
+					debug("iv: ", iv, " remember to change this arg every time.\
+								a no network solution is awesome but I don't think it is 100% secure.\
+								send new iv from gameserver every response (Initialization Vector\
+								change = same string, different encrypt)");
+					std::string sk_str(res->body.substr(52, 256), 0, 256);
+					debug("sk_str: ", sk_str);
+					LOOP_PACK.ci.keyFromString(key);
+					LOOP_PACK.ci.ivFromString(iv);
+					LOOP_PACK.sk.from_string(sk_str);
+					debug("established session!");
+					debug("client ci for this session: ", LOOP_PACK.ci);
+					debug("client secret key for this session: ", LOOP_PACK.sk.to_string());
+					debug("connecting to the game server...");
 
-				std::string typ("a");
-				ga::array_packet pack(
-					ga::array_packet::get_args_size(
-						typ,
-						selected_account,
-						sk.to_string()
-					));
-				pack.fill(typ, selected_account, sk.to_string());
-				com.send(com.getPeer(), pack(), pack.size(), ENET_PACKET_FLAG_RELIABLE);
-			}
+					LOOP_PACK.CharacterSelectReceiver = new CharacterSelectEventReceiver(LOOP_PACK);
+					device->setEventReceiver(LOOP_PACK.CharacterSelectReceiver);
+					jointhreads();
+
+					std::string typ("a");
+					ga::array_packet pack(
+						ga::array_packet::get_args_size(
+							typ,
+							email_str,
+							LOOP_PACK.sk.to_string()
+						));
+					pack.fill(typ, email_str, LOOP_PACK.sk.to_string());
+					LOOP_PACK.com.send(LOOP_PACK.com.getPeer(), pack(), pack.size(), ENET_PACKET_FLAG_RELIABLE);
+				});
+			},
+			email,
+			password,
+			game_server_name);	
 		}
 
 		void sendCreateAccountPost()
 		{
 			std::shared_ptr<httplib::Response> res;
-			makeLoginPost("/createaccount", res);
-			debug("response body: ", res->body);
-			if (res->body[0] == '\0')
-			{
-				debug("create account failure");
-				statusmsg->setText(L"Create Account Failure!");
-				resetStatusMessageTimeout();
-			}
-			else
-			{
-				debug("create account success");
-				statusmsg->setText(L"Create Account Success!");
-				resetStatusMessageTimeout();
-			}
+			makePost("/createaccount", [this](std::shared_ptr<httplib::Response>& res) {
+				onRequestSuccess(res, [this](std::shared_ptr<httplib::Response>& res) {
+					debug("create account success");
+					resetStatusMessageTimeout(L"Create Account Success!");
+				});
+			},
+			wcstrtostdstr16(email->getText()),
+			wcstrtostdstr16(password->getText()),
+			getGameServerNameFromSelected());
 		}
 
-		void resetStatusMessageTimeout()
+		void resetStatusMessageTimeout(const wchar_t* status_msg)
 		{
 			debug("pushing status timeout thread onto thread array");
+			statusmsg->setText(status_msg);
 			ga::sleeper* sleep = new ga::sleeper();
 			threads.push_back(std::thread([this, sleep]() {
 				sleep->sleepFor(std::chrono::milliseconds(3000));
@@ -274,6 +257,7 @@ namespace ga {
 
 		irr::video::ITexture* getBG()
 		{
+			debug("got bg");
 			return bg;
 		}
 	};

@@ -5,30 +5,20 @@
 #include <irrlicht.h>
 #include <unordered_map>
 
-extern irr::gui::IGUIEnvironment* env;
-extern irr::video::ITexture* bg;
-extern irr::video::IVideoDriver* driver;
-extern irr::scene::ISceneManager* smgr;
-extern unsigned int runloop;
-extern ga::udp_com com;
-extern irr::scene::ICameraSceneNode* camera;
 
 namespace ga {
 	class GameEventReceiver : public irr::IEventReceiver
 	{
+		LOOP_PARAM_PACK& LOOP_PACK;
 
 	public:
-		GameEventReceiver()	{}
+		GameEventReceiver(LOOP_PARAM_PACK& LOOP_PACK) : LOOP_PACK(LOOP_PACK) {}
 
 		virtual bool OnEvent(const irr::SEvent& event)
 		{
 			if (event.EventType == irr::EET_GUI_EVENT)
 			{
-				debug("got a gui event");
-				debug("getting id of gui element");
-				irr::s32 id = event.GUIEvent.Caller->getID();
-				debug("gui element id: ", id);
-				debug("checking type of gui event");
+				int id = event.GUIEvent.Caller->getID();
 				if (event.GUIEvent.EventType == irr::gui::EGET_BUTTON_CLICKED)
 				{
 					debug("irr::gui::EGET_BUTTON_CLICKED");
